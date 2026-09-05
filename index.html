@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michigan Football Pool</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f4f6f8; color: #333; }
+    h1 { text-align: center; color: #00274C; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+    .player-box { border: 1px solid #e1e4e8; border-radius: 8px; padding: 12px; text-align: center; }
+    .player-box img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    select, button { width: 100%; padding: 8px; margin-top: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    button { background: #00274C; color: #FFCB05; font-weight: bold; cursor: pointer; border: none; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    canvas { background: white; padding: 10px; border-radius: 12px; }
+  </style>
+</head>
+<body>
+
+  <h1>〽️ U-Michigan Pick 'Em Pool</h1>
+
+  <div class="card">
+    <h2 id="game-title">Loading Game Info...</h2>
+    <p id="game-spread">DraftKings Spread: --</p>
+    <p id="lock-status" style="font-weight: bold; color: #d9534f;"></p>
+    
+    <div class="grid" id="pick-forms"></div>
+    <button id="submit-btn" onclick="savePicks()">Submit Picks</button>
+  </div>
+
+  <div class="card">
+    <h2>Cumulative Leaderboard</h2>
+    <canvas id="leaderboardChart"></canvas>
+  </div>
+
+<script>
+let appData = {};
+
+// Custom plugin to draw profile pics on the tips of line charts
+const avatarPlugin = {
+  id: 'avatarPlugin',
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      const lastPoint = meta.data[meta.data.length - 1];
+      if (lastPoint && dataset.avatarImg) {
+        const size = 32;
+        const x = lastPoint.x - size / 2;
+        const y = lastPoint.y - size / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(lastPoint.x, lastPoint.y, size / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(dataset.avatarImg, x, y, size, size);
+        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(lastPoint.x, lastPoint.y, size / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = dataset.borderColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    });
+  }
+};
+
+async function init() {
+  const res = await fetch('data.json');
+  appData = await res.json();
+  const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
+
+  document.getElementById('game-title').innerText = `Week ${currentWeek.week}: Michigan vs ${currentWeek.opponent}`;
+  document.getElementById('game-spread').innerText = `DraftKings Spread: Michigan ${currentWeek.spread > 0 ? '+' : ''}${currentWeek.spread}`;
+
+  const container = document.getElementById('pick-forms');
+  container.innerHTML = '';
+
+  appData.players.forEach(p => {
+    const userPick = currentWeek.picks[p.id] || {};
+    const disabled = currentWeek.locked ? 'disabled' : '';
+    
+    container.innerHTML += `
+      <div class="player-box">
+        <img src="${p.avatar}" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <select id="${p.id}-win" ${disabled}>
+          <option value="true" ${userPick.winPick === true ? 'selected' : ''}>MICH Win</option>
+          <option value="false" ${userPick.winPick === false ? 'selected' : ''}>MICH Lose</option>
+        </select>
+        <select id="${p.id}-cover" ${disabled}>
+          <option value="true" ${userPick.coverPick === true ? 'selected' : ''}>Cover Spread</option>
+          <option value="false" ${userPick.coverPick === false ? 'selected' : ''}>Fail to Cover</option>
+        </select>
+      </div>
+    `;
+  });
+
+  if(currentWeek.locked) {
+    document.getElementById('lock-status').innerText = "🔒 Picks are locked for this week.";
+    document.getElementById('submit-btn').disabled = true;
+  }
+
+  renderChart();
+}
+
+function renderChart() {
+  const labels = appData.weeks.filter(w => w.gameFinished || w.locked).map(w => w.opponent);
+  const datasets = appData.players.map(player => {
+    let cumulative = 0;
+    const data = [];
+    appData.weeks.forEach(w => {
+      if(w.gameFinished || w.locked) {
+        cumulative += (w.picks[player.id]?.pointsAwarded || 0);
+        data.push(cumulative);
+      }
+    });
+
+    const img = new Image();
+    img.src = player.avatar;
+
+    return {
+      label: player.name,
+      data: data,
+      borderColor: player.color,
+      avatarImg: img,
+      tension: 0.1
+    };
+  });
+
+  new Chart(document.getElementById('leaderboardChart'), {
+    type: 'line',
+    data: { labels, datasets },
+    plugins: [avatarPlugin],
+    options: {
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+function savePicks() {
+  alert("To save picks permanently, update data.json or commit directly via GitHub.");
+}
+
+init();
+</script>
+</body>
+</html>
