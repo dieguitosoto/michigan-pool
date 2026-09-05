@@ -1,0 +1,26 @@
+{
+  "players": [
+    { "id": "lander", "name": "Lander", "avatar": "assets/Lander.png", "color": "#00274C" },
+    { "id": "juan", "name": "Juan", "avatar": "assets/Juan.png", "color": "#FFCB05" },
+    { "id": "diego", "name": "Diego", "avatar": "assets/Diego.png", "color": "#17a2b8" },
+    { "id": "freddy", "name": "Freddy", "avatar": "assets/Freddy.png", "color": "#28a745" }
+  ],
+  "weeks": [
+    {
+      "week": 1,
+      "opponent": "Western Michigan",
+      "espnEventId": "401858428",
+      "spread": -26.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    }
+  ]
+}
