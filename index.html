@@ -69,7 +69,7 @@ const avatarPlugin = {
 };
 
 async function init() {
-  const res = await fetch('data.json');
+  const res = await fetch('preview.json');
   appData = await res.json();
   const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
 
