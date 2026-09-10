@@ -88,11 +88,13 @@ for week in data['weeks']:
 with open('data.json', 'w') as f:
     json.dump(data, f, indent=2)
 
-# Dispatch notification email if game was newly scored
+# Send Resend notification email if game scores were updated
 if updated and resend.api_key:
-    resend.Emails.send({
+    response = resend.Emails.send({
         "from": "onboarding@resend.dev",
         "to": "dieguitosoto@gmail.com",
         "subject": "〽️ Michigan Football Pool Chart Updated!",
         "html": f"<p>The scores for the recent Michigan game have been processed!</p><p>Check out the updated leaderboard line chart here: <a href='https://dieguitosoto.github.io/michigan-pool'>View Chart</a></p>"
     })
+    print(f"Resend API Response: {response}")
+
