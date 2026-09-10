@@ -2,8 +2,8 @@ name: Michigan Pool Automation
 
 on:
   schedule:
-    - cron: '0 16 * * 5' # Every Friday at 12:00 PM EST (fetches odds & locks picks)
-    - cron: '0 12 * * 0' # Every Sunday at 8:00 AM EST (scores finished Saturday games)
+    - cron: '0 16 * * 5' # Every Friday at 12:00 PM EST
+    - cron: '0 12 * * 0' # Every Sunday at 8:00 AM EST
   workflow_dispatch:
 
 jobs:
@@ -11,22 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
       - name: Install dependencies
         run: pip install resend
+
       - name: Run automation script
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: python scripts/update_and_score.py
-      - name: Commit and push updates
-        run: |
-          git config --global user.name "GitHub Action Bot"
-          git config --global user.email "action@github.com"
-          git add data.json
-          git commit -m "Automated data and score update" || exit 0
-          git pull --rebase origin main
-          git push
 
+      - name: Auto Commit & Push Updates
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated data and score update"
+          file_pattern: "data.json"
