@@ -1,6 +1,6 @@
 import json
 import os
-import cloudscraper
+import requests
 import resend
 
 resend.api_key = os.environ.get("RESEND_API_KEY")
@@ -9,41 +9,49 @@ with open('data.json', 'r') as f:
     data = json.load(f)
 
 updated = False
-scraper = cloudscraper.create_scraper()
+
+# Generic browser header
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+}
 
 for week in data['weeks']:
     event_id = week['espnEventId']
     print(f"--- Processing Week {week['week']} (Event ID: {event_id}) ---")
     
-    url = f"https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event={event_id}"
+    # Public CDN API endpoint (bypasses 403 IP block)
+    url = f"https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=football&league=ncaa&event={event_id}"
     
     try:
-        response = scraper.get(url, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         print(f"HTTP Response Code: {response.status_code}")
         
         if response.status_code == 200:
             res = response.json()
-            header = res.get('header', {})
-            competitions = header.get('competitions', [{}])[0]
-            status_info = competitions.get('status', {})
-            state = status_info.get('type', {}).get('state')
+            sports = res.get('sports', [{}])[0]
+            leagues = sports.get('leagues', [{}])[0]
+            events = leagues.get('events', [{}])[0]
+            
+            status_summary = events.get('status', {}).get('summary', '')
+            status_type = events.get('status', {}).get('type', '')
+            print(f"Game Status: {status_summary} (type: {status_type})")
 
-            print(f"Game State: {state}")
+            competitors = events.get('competitors', [])
+            
+            # Extract Spread Odds if available
+            odds_info = events.get('odds', {})
+            if odds_info:
+                spread_text = odds_info.get('details', '') # e.g. "MICH -26.5"
+                print(f"DraftKings Odds Detail: {spread_text}")
 
-            # Extract Spread
-            if 'pickcenter' in res:
-                for provider in res['pickcenter']:
-                    if provider.get('provider', {}).get('name') == 'draftkings':
-                        week['spread'] = provider.get('spread', week.get('spread', -26.5))
-                        print(f"DraftKings Spread: {week['spread']}")
+            # Determine completion (STATUS_FINAL / COMPLETED / 'Final')
+            is_completed = status_type == 'STATUS_FINAL' or 'Final' in status_summary
 
-            # Score game if completed (state == 'post') and not yet finished
-            if state == 'post' and not week['gameFinished']:
-                print("Game is completed! Scoring picks...")
-                competitors = competitions.get('competitors', [])
+            if is_completed and not week['gameFinished']:
+                print("Game is completed! Calculating player scores...")
                 
-                mich = next(c for c in competitors if 'Michigan' in c['team']['displayName'] and 'Western' not in c['team']['displayName'])
-                opp = next(c for c in competitors if 'Michigan' not in c['team']['displayName'] or 'Western' in c['team']['displayName'])
+                mich = next(c for c in competitors if 'Michigan' in c.get('displayName', '') and 'Western' not in c.get('displayName', ''))
+                opp = next(c for c in competitors if 'Michigan' not in c.get('displayName', '') or 'Western' in c.get('displayName', ''))
 
                 m_score = int(mich.get('score', 0))
                 o_score = int(opp.get('score', 0))
@@ -66,18 +74,18 @@ for week in data['weeks']:
                     if pick['coverPick'] == mich_covered:
                         pts += 1
                     pick['pointsAwarded'] = pts
-                    print(f"Player {pid}: {pts} points")
+                    print(f"Player {pid}: {pts} points awarded")
 
     except Exception as e:
         print(f"Error checking week {week['week']}: {e}")
 
-# Save updated database
+# Save updated JSON state
 with open('data.json', 'w') as f:
     json.dump(data, f, indent=2)
 
-# Send Notification Email
+# Dispatch notification email via Resend
 if updated and resend.api_key:
-    print("Sending Resend email notification...")
+    print("Dispatching Resend email notification...")
     email_res = resend.Emails.send({
         "from": "onboarding@resend.dev",
         "to": "dieguitosoto@gmail.com",
