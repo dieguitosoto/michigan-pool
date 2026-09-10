@@ -12,11 +12,10 @@ updated = False
 
 session = requests.Session()
 session.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     'Accept': 'application/json, text/plain, */*',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Origin': 'https://www.espn.com',
-    'Referer': 'https://www.espn.com/'
+    'Referer': 'https://www.espn.com/college-football/'
 })
 
 for week in data['weeks']:
@@ -39,7 +38,7 @@ for week in data['weeks']:
 
             print(f"Game State: '{state}', Completed: {completed}")
 
-            # Extract Odds
+            # Extract Spread Odds
             if 'pickcenter' in res:
                 for provider in res['pickcenter']:
                     if provider.get('provider', {}).get('name') == 'draftkings':
