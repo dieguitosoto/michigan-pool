@@ -10,50 +10,69 @@ with open('data.json', 'r') as f:
 
 updated = False
 
-# Standard browser headers to bypass ESPN 403 restrictions
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-US,en;q=0.9',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'Accept': 'application/json'
 }
 
 for week in data['weeks']:
-    url = f"https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event={week['espnEventId']}"
+    event_id = week['espnEventId']
+    
+    # Use ESPN Core API endpoint to avoid 403 blocks
+    event_url = f"https://sports.core.api.espn.com/v2/sports/football/leagues/usa.1/events/{event_id}"
     
     try:
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        res = response.json()
+        res = requests.get(event_url, headers=headers, timeout=10).json()
+        
+        # Check game completion status
+        competition = res.get('competitions', [{}])[0]
+        status_type = competition.get('status', {}).get('type', {})
+        is_completed = status_type.get('completed', False)
 
-        header = res.get('header', {})
-        competitions = header.get('competitions', [{}])[0]
-        status = competitions.get('status', {}).get('type', {}).get('state')
+        # Fetch spread odds if available
+        odds_ref = competition.get('odds', {}).get('$ref')
+        if odds_ref:
+            try:
+                odds_res = requests.get(odds_ref, headers=headers, timeout=10).json()
+                items = odds_res.get('items', [])
+                if items:
+                    # Take the first available odds provider spread
+                    week['spread'] = items[0].get('spread', week.get('spread', -26.5))
+            except Exception as e:
+                print(f"Could not fetch odds details: {e}")
 
-        # Extract DraftKings odds spread
-        if 'pickcenter' in res:
-            for provider in res['pickcenter']:
-                if provider.get('provider', {}).get('name') == 'draftkings':
-                    week['spread'] = provider.get('spread', {}).get('pointSpread', {}).get('american')
+        # Score the game if finished and not yet marked finished
+        if is_completed and not week['gameFinished']:
+            competitors_ref = competition.get('competitors', [])
+            
+            mich_score = 0
+            opp_score = 0
+            
+            for comp in competitors_ref:
+                score_ref = comp.get('score', {}).get('$ref')
+                team_ref = comp.get('team', {}).get('$ref')
+                
+                if score_ref and team_ref:
+                    team_data = requests.get(team_ref, headers=headers, timeout=10).json()
+                    score_data = requests.get(score_ref, headers=headers, timeout=10).json()
+                    
+                    score_val = int(score_data.get('value', 0))
+                    
+                    if 'Michigan' in team_data.get('displayName', '') and 'Western' not in team_data.get('displayName', ''):
+                        mich_score = score_val
+                    else:
+                        opp_score = score_val
 
-        # Score the game if finished and not yet processed
-        if status == 'post' and not week['gameFinished']:
-            competitors = competitions.get('competitors', [])
-            mich = next(c for c in competitors if 'Michigan' in c['team']['displayName'])
-            opp = next(c for c in competitors if 'Michigan' not in c['team']['displayName'])
-
-            m_score = int(mich.get('score', 0))
-            o_score = int(opp.get('score', 0))
-
-            mich_won = m_score > o_score
+            mich_won = mich_score > opp_score
             spread_val = float(week.get('spread', -26.5))
-            mich_covered = (m_score - o_score) + spread_val > 0
+            mich_covered = (mich_score - opp_score) + spread_val > 0
 
             week['michiganWon'] = mich_won
             week['michiganCovered'] = mich_covered
             week['gameFinished'] = True
             updated = True
 
-            # Calculate scores for each player
+            # Assign points to players
             for pid, pick in week['picks'].items():
                 pts = 0
                 if pick['winPick'] == mich_won:
@@ -65,11 +84,11 @@ for week in data['weeks']:
     except Exception as e:
         print(f"Error checking week {week['week']}: {e}")
 
-# Save updated JSON state
+# Save updated JSON database
 with open('data.json', 'w') as f:
     json.dump(data, f, indent=2)
 
-# Send Resend notification email if game scores were updated
+# Dispatch notification email if game was newly scored
 if updated and resend.api_key:
     resend.Emails.send({
         "from": "onboarding@resend.dev",
