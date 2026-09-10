@@ -3,25 +3,25 @@
     {
       "id": "lander",
       "name": "Lander",
-      "avatar": "assets/Lander.png",
+      "avatar": "Lander Face.png",
       "color": "#00274C"
     },
     {
       "id": "juan",
       "name": "Juan",
-      "avatar": "assets/Juan.png",
+      "avatar": "Juan Face.png",
       "color": "#FFCB05"
     },
     {
       "id": "diego",
       "name": "Diego",
-      "avatar": "assets/Diego.png",
+      "avatar": "Diego Face.png",
       "color": "#17a2b8"
     },
     {
       "id": "freddy",
       "name": "Freddy",
-      "avatar": "assets/Freddy.png",
+      "avatar": "Freddy Face.png",
       "color": "#28a745"
     }
   ],
