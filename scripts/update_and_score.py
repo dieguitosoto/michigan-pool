@@ -11,9 +11,12 @@ with open('data.json', 'r') as f:
 updated = False
 
 for week in data['weeks']:
-    # Fetch live game info from ESPN Hidden Endpoint
+    # Fetch live game info from ESPN
     url = f"https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event={week['espnEventId']}"
-    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    
+    # Send custom browser User-Agent header to avoid HTTP 403 Forbidden
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    req = urllib.request.Request(url, headers=headers)
     
     try:
         with urllib.request.urlopen(req) as response:
@@ -26,7 +29,7 @@ for week in data['weeks']:
             if 'pickcenter' in res:
                 for provider in res['pickcenter']:
                     if provider.get('provider', {}).get('name') == 'draftkings':
-                        week['spread'] = provider.get('spread')
+                        week['spread'] = provider.get('spread', {}).get('pointSpread', {}).get('american')
 
             # Process finished game scoring
             if status == 'post' and not week['gameFinished']:
@@ -38,7 +41,10 @@ for week in data['weeks']:
                 o_score = int(opp.get('score', 0))
 
                 mich_won = m_score > o_score
-                mich_covered = (m_score - o_score) + week['spread'] > 0
+                
+                # Check spread coverage (Michigan spread is typically negative, e.g., -26.5)
+                spread_val = float(week.get('spread', 0))
+                mich_covered = (m_score - o_score) + spread_val > 0
 
                 week['michiganWon'] = mich_won
                 week['michiganCovered'] = mich_covered
@@ -67,5 +73,5 @@ if updated and resend.api_key:
         "from": "onboarding@resend.dev",
         "to": "dieguitosoto@gmail.com",
         "subject": "〽️ Michigan Football Pool Chart Updated!",
-        "html": f"<p>The scores for the recent Michigan game have been processed!</p><p>Check out the updated leaderboard line chart here: <a href='https://YOUR_GITHUB_USERNAME.github.io/michigan-pool'>View Chart</a></p>"
+        "html": f"<p>The scores for the recent Michigan game have been processed!</p><p>Check out the updated leaderboard line chart here: <a href='https://dieguitosoto.github.io/michigan-pool'>View Chart</a></p>"
     })
