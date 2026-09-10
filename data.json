@@ -32,7 +32,7 @@
       "espnEventId": "401858428",
       "spread": -26.5,
       "locked": false,
-      "gameFinished": true,
+      "gameFinished": false,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
