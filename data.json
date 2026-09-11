@@ -36,10 +36,26 @@
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 1 },
-        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
-        "diego": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
-        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 2 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 1
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 2
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 2
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 2
+        }
       }
     },
     {
@@ -52,10 +68,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": false, "coverPick": false, "pointsAwarded": 0 },
-        "juan": { "winPick": false, "coverPick": false, "pointsAwarded": 0 },
-        "diego": { "winPick": false, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": false, "coverPick": false, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": false,
+          "coverPick": false,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": false,
+          "coverPick": false,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": false,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": false,
+          "coverPick": false,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -68,10 +100,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -84,10 +132,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -100,10 +164,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -116,10 +196,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -132,10 +228,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": false,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -148,10 +260,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -164,10 +292,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": false, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": false, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": false,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": false,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -180,10 +324,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     },
     {
@@ -196,10 +356,26 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+        "lander": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "juan": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "diego": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        },
+        "freddy": {
+          "winPick": true,
+          "coverPick": true,
+          "pointsAwarded": 0
+        }
       }
     }
   ]
