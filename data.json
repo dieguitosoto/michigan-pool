@@ -31,31 +31,175 @@
       "opponent": "Western Michigan",
       "espnEventId": "401858428",
       "spread": -26.5,
-      "locked": false,
+      "locked": true,
       "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 1 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
+        "diego": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 2 }
+      }
+    },
+    {
+      "week": 2,
+      "opponent": "Oklahoma",
+      "espnEventId": "401858435",
+      "spread": -3.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 3,
+      "opponent": "Central Michigan",
+      "espnEventId": "401858442",
+      "spread": -28.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 4,
+      "opponent": "Wisconsin",
+      "espnEventId": "401858449",
+      "spread": -7.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 5,
+      "opponent": "Nebraska",
+      "espnEventId": "401858456",
+      "spread": -10.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 6,
+      "opponent": "Michigan State",
+      "espnEventId": "401858463",
+      "spread": -14.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 7,
+      "opponent": "Penn State",
+      "espnEventId": "401858470",
+      "spread": -2.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 8,
+      "opponent": "Washington",
+      "espnEventId": "401858477",
+      "spread": -6.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 9,
+      "opponent": "Oregon",
+      "espnEventId": "401858484",
+      "spread": 3.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": false, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": false, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 10,
+      "opponent": "Rutgers",
+      "espnEventId": "401858491",
+      "spread": -17.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 11,
+      "opponent": "Ohio State",
+      "espnEventId": "401858498",
+      "spread": 4.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
       }
     }
   ]
