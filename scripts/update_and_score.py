@@ -11,21 +11,28 @@ with open('data.json', 'r') as f:
 
 updated = False
 
-# Fetch schedule directly from official MGoBlue RSS endpoint
-mgoblue_url = "https://mgoblue.com/services/schedule_xml_2.ashx?sport_id=1"
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 }
 
+# Fetch both standard HTML schedule page and text endpoint from MGoBlue
+mgoblue_text = ""
 try:
-    response = requests.get(mgoblue_url, headers=headers, timeout=15)
-    xml_data = response.text if response.status_code == 200 else ""
+    url_html = "https://mgoblue.com/sports/football/schedule"
+    res_html = requests.get(url_html, headers=headers, timeout=15)
+    if res_html.status_code == 200:
+        mgoblue_text += res_html.text
+
+    url_text = "https://mgoblue.com/sports/football/schedule/text"
+    res_text = requests.get(url_text, headers=headers, timeout=15)
+    if res_text.status_code == 200:
+        mgoblue_text += " " + res_text.text
 except Exception as e:
-    print(f"Error fetching MGoBlue endpoint: {e}")
-    xml_data = ""
+    print(f"Error fetching MGoBlue pages: {e}")
 
 for week in data['weeks']:
     if week['gameFinished']:
+        print(f"Week {week['week']} ({week['opponent']}) already processed.")
         continue
 
     opponent = week['opponent']
@@ -35,36 +42,45 @@ for week in data['weeks']:
     o_score = None
     is_completed = False
 
-    # Extract score details for current opponent from MGoBlue XML/HTML payload
-    if xml_data and opponent.lower() in xml_data.lower():
-        # Look for result patterns like "W, 13-12" or "L, 20-24"
-        match = re.search(rf'{opponent}.*?([WL]),?\s*(\d{{1,2}})\s*-\s*(\d{{1,2}})', xml_data, re.IGNORECASE | re.DOTALL)
-        if match:
-            outcome, score1, score2 = match.groups()
-            is_completed = True
-            if outcome.upper() == 'W':
-                m_score = max(int(score1), int(score2))
-                o_score = min(int(score1), int(score2))
-            else:
-                m_score = min(int(score1), int(score2))
-                o_score = max(int(score1), int(score2))
-            print(f"Extracted from MGoBlue -> Michigan: {m_score}, {opponent}: {o_score}")
+    if mgoblue_text:
+        # Match pattern 1: "W, 17-10" or "L, 10-17"
+        pattern1 = rf'{re.escape(opponent)}.*?\b([WL])\b,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
+        # Match pattern 2: "Win , 17 , to , 10" or "Loss , 10 , to , 17"
+        pattern2 = rf'{re.escape(opponent)}.*?\b(Win|Loss)\b\s*,\s*(\d{{1,3}})\s*,\s*to\s*,\s*(\d{{1,3}})'
 
-    # Fallback to current score for Week 1 (13 - 12) if XML formatting varies
-    if not is_completed and week['week'] == 1:
-        is_completed = True
-        m_score = 13
-        o_score = 12
+        match1 = re.search(pattern1, mgoblue_text, re.IGNORECASE | re.DOTALL)
+        match2 = re.search(pattern2, mgoblue_text, re.IGNORECASE | re.DOTALL)
+
+        if match1:
+            outcome, score1, score2 = match1.groups()
+            is_completed = True
+            s1, s2 = int(score1), int(score2)
+            if outcome.upper() == 'W':
+                m_score, o_score = max(s1, s2), min(s1, s2)
+            else:
+                m_score, o_score = min(s1, s2), max(s1, s2)
+            print(f"MGoBlue Pattern 1 Match -> Michigan: {m_score}, {opponent}: {o_score}")
+        elif match2:
+            outcome, score1, score2 = match2.groups()
+            is_completed = True
+            s1, s2 = int(score1), int(score2)
+            if outcome.lower() == 'win':
+                m_score, o_score = max(s1, s2), min(s1, s2)
+            else:
+                m_score, o_score = min(s1, s2), max(s1, s2)
+            print(f"MGoBlue Pattern 2 Match -> Michigan: {m_score}, {opponent}: {o_score}")
 
     # Process scoring logic
     if is_completed and m_score is not None and not week['gameFinished']:
         print("Calculating points for pool participants...")
         
         mich_won = m_score > o_score
-        spread_val = float(week.get('spread', -26.5))
+        spread_val = float(week.get('spread', 0))
+        
+        # Michigan Cover Logic: Michigan Score - Opponent Score + Spread > 0
         mich_covered = (m_score - o_score) + spread_val > 0
 
-        print(f"Outcome -> Won: {mich_won}, Covered Spread ({spread_val}): {mich_covered}")
+        print(f"Result -> Final: {m_score}-{o_score} | Michigan Won: {mich_won} | Michigan Covered ({spread_val}): {mich_covered}")
 
         week['michiganWon'] = mich_won
         week['michiganCovered'] = mich_covered
