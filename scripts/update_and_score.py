@@ -15,12 +15,17 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 }
 
-html_content = ""
+raw_content = ""
 try:
-    url_html = "https://mgoblue.com/sports/football/schedule"
-    res = requests.get(url_html, headers=headers, timeout=15)
-    if res.status_code == 200:
-        html_content = res.text
+    # Fetch main schedule page
+    res_html = requests.get("https://mgoblue.com/sports/football/schedule", headers=headers, timeout=15)
+    if res_html.status_code == 200:
+        raw_content += res_html.text
+
+    # Fetch mobile/text schedule endpoint as fallback
+    res_text = requests.get("https://mgoblue.com/sports/football/schedule/text", headers=headers, timeout=15)
+    if res_text.status_code == 200:
+        raw_content += "\n" + res_text.text
 except Exception as e:
     print(f"Error fetching MGoBlue schedule page: {e}")
 
@@ -36,29 +41,37 @@ for week in data['weeks']:
     o_score = None
     is_completed = False
 
-    if html_content:
-        # Isolate the HTML block specific to this opponent to avoid cross-matching
-        opp_regex = rf'(?:vs|at)\s+[^<]*?{re.escape(opponent)}.*?(?=c-schedule__game-item|$)'
-        game_block_match = re.search(opp_regex, html_content, re.IGNORECASE | re.DOTALL)
+    if raw_content:
+        # Locate game section associated with the opponent
+        opp_escaped = re.escape(opponent)
         
-        if game_block_match:
-            block = game_block_match.group(0)
-            
-            # Check if this specific game block has a completed result (W, 17-10 or L, 10-17)
-            score_match = re.search(r'\b([WL])\b\s*,\s*(\d{1,3})\s*-\s*(\d{1,3})', block)
-            if score_match:
-                outcome, score1, score2 = score_match.groups()
+        # Look for explicit win/loss patterns tied to opponent
+        patterns = [
+            # Pattern 1: Oklahoma ... W, 17-10 or Oklahoma ... L, 10-17
+            rf'{opp_escaped}.*?\b([WL])\b\s*,\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})',
+            # Pattern 2: Oklahoma ... Win, 17, to, 10 or Loss, 10, to, 17
+            rf'{opp_escaped}.*?\b(Win|Loss)\b\s*,\s*(\d{{1,3}})\s*,\s*to\s*,\s*(\d{{1,3}})',
+            # Pattern 3: W 17-10 vs Oklahoma or L 10-17 vs Oklahoma
+            rf'\b([WL])\b\s*(\d{{1,3}})\s*-\s*(\d{{1,3}}).*?{opp_escaped}'
+        ]
+
+        for pat in patterns:
+            match = re.search(pat, raw_content, re.IGNORECASE | re.DOTALL)
+            if match:
+                groups = match.groups()
+                outcome = groups[0].upper()
+                s1, s2 = int(groups[1]), int(groups[2])
+                
                 is_completed = True
-                s1, s2 = int(score1), int(score2)
-                if outcome.upper() == 'W':
+                if outcome in ['W', 'WIN']:
                     m_score, o_score = max(s1, s2), min(s1, s2)
                 else:
                     m_score, o_score = min(s1, s2), max(s1, s2)
-                print(f"Found strict game match -> Michigan: {m_score}, {opponent}: {o_score}")
-            else:
-                print(f"Game vs {opponent} found, but not finished yet.")
+                
+                print(f"Matched Score -> Michigan: {m_score}, {opponent}: {o_score}")
+                break
 
-    # Process scoring logic if game is finished
+    # Process scoring logic if game is completed
     if is_completed and m_score is not None and not week['gameFinished']:
         print("Calculating points for pool participants...")
         
