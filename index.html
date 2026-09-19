@@ -51,7 +51,6 @@ const avatarPlugin = {
     const spacing = 36; // Horizontal offset per avatar when tied
 
     for (let pointIdx = 0; pointIdx < numPoints; pointIdx++) {
-      // Group datasets by score value at current week index
       const scoreGroups = {};
 
       chart.data.datasets.forEach((dataset, datasetIdx) => {
@@ -64,7 +63,6 @@ const avatarPlugin = {
         }
       });
 
-      // Draw avatars with horizontal offsets for ties
       Object.values(scoreGroups).forEach(group => {
         const count = group.length;
         const totalWidth = (count - 1) * spacing;
@@ -132,7 +130,7 @@ async function init() {
 }
 
 function renderChart() {
-  const finishedWeeks = appData.weeks.filter(w => w.gameFinished);
+  const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
   const labels = finishedWeeks.map(w => w.opponent);
   
   const datasets = appData.players.map(player => {
