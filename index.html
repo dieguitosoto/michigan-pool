@@ -39,34 +39,57 @@
 let appData = {};
 let chartInstance = null;
 
-// Custom plugin to draw profile pics on the tips of line charts
+// Custom plugin to draw profile pics side-by-side when scores tie
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
     const ctx = chart.ctx;
-    chart.data.datasets.forEach((dataset, i) => {
-      const meta = chart.getDatasetMeta(i);
-      const lastPoint = meta.data[meta.data.length - 1];
-      if (lastPoint && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
-        const size = 36;
-        const x = lastPoint.x - size / 2;
-        const y = lastPoint.y - size / 2;
-        
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(lastPoint.x, lastPoint.y, size / 2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(dataset.avatarImg, x, y, size, size);
-        ctx.restore();
-        
-        ctx.beginPath();
-        ctx.arc(lastPoint.x, lastPoint.y, size / 2, 0, Math.PI * 2);
-        ctx.strokeStyle = dataset.borderColor;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      }
-    });
+    const numPoints = chart.data.labels.length;
+    if (numPoints === 0) return;
+
+    const size = 32; // Avatar diameter in pixels
+    const spacing = 36; // Horizontal offset per avatar when tied
+
+    for (let pointIdx = 0; pointIdx < numPoints; pointIdx++) {
+      // Group datasets by score value at current week index
+      const scoreGroups = {};
+
+      chart.data.datasets.forEach((dataset, datasetIdx) => {
+        const meta = chart.getDatasetMeta(datasetIdx);
+        const point = meta.data[pointIdx];
+        if (point && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
+          const val = dataset.data[pointIdx];
+          if (!scoreGroups[val]) scoreGroups[val] = [];
+          scoreGroups[val].push({ point, dataset });
+        }
+      });
+
+      // Draw avatars with horizontal offsets for ties
+      Object.values(scoreGroups).forEach(group => {
+        const count = group.length;
+        const totalWidth = (count - 1) * spacing;
+        const startX = group[0].point.x - (totalWidth / 2);
+
+        group.forEach((item, i) => {
+          const drawX = startX + (i * spacing);
+          const drawY = item.point.y;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(item.dataset.avatarImg, drawX - size / 2, drawY - size / 2, size, size);
+          ctx.restore();
+
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+          ctx.strokeStyle = item.dataset.borderColor;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        });
+      });
+    }
   }
 };
 
@@ -148,7 +171,7 @@ function renderChart() {
       scales: {
         y: {
           min: 0,
-          suggestedMax: 2,
+          suggestedMax: 4,
           ticks: { stepSize: 1, precision: 0 }
         }
       }
