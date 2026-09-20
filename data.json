@@ -28,6 +28,7 @@
   "weeks": [
     {
       "week": 1,
+      "date": "2026-09-05",
       "opponent": "Western Michigan",
       "espnEventId": "401858428",
       "spread": -26.5,
@@ -36,30 +37,15 @@
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 1 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
+        "diego": { "winPick": true, "coverPick": false, "pointsAwarded": 2 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 2 }
       }
     },
     {
       "week": 2,
+      "date": "2026-09-12",
       "opponent": "Oklahoma",
       "espnEventId": "401858435",
       "spread": 5.5,
@@ -68,63 +54,33 @@
       "michiganWon": true,
       "michiganCovered": true,
       "picks": {
-        "lander": {
-          "winPick": false,
-          "coverPick": false,
-          "pointsAwarded": 0
-        },
-        "juan": {
-          "winPick": false,
-          "coverPick": false,
-          "pointsAwarded": 0
-        },
-        "diego": {
-          "winPick": false,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "freddy": {
-          "winPick": false,
-          "coverPick": false,
-          "pointsAwarded": 0
-        }
+        "lander": { "winPick": false, "coverPick": false, "pointsAwarded": 0 },
+        "juan": { "winPick": false, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": false, "coverPick": true, "pointsAwarded": 1 },
+        "freddy": { "winPick": false, "coverPick": false, "pointsAwarded": 0 }
       }
     },
     {
       "week": 3,
+      "date": "2026-09-19",
       "opponent": "UTEP",
       "espnEventId": "401858442",
-      "spread": -34.5,
-      "locked": false,
+      "spread": -28.5,
+      "locked": true,
       "gameFinished": true,
       "michiganWon": true,
-      "michiganCovered": false,
+      "michiganCovered": true,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 2 }
       }
     },
     {
       "week": 4,
-      "opponent": "Wisconsin",
+      "date": "2026-09-26",
+      "opponent": "Iowa",
       "espnEventId": "401858449",
       "spread": -7.5,
       "locked": false,
@@ -132,31 +88,16 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 0
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 0
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
       }
     },
     {
       "week": 5,
-      "opponent": "Nebraska",
+      "date": "2026-10-03",
+      "opponent": "Minnesota",
       "espnEventId": "401858456",
       "spread": -10.5,
       "locked": false,
@@ -164,95 +105,33 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
       }
     },
     {
       "week": 6,
-      "opponent": "Michigan State",
-      "espnEventId": "401858463",
-      "spread": -14.5,
-      "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": false,
-      "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        }
-      }
-    },
-    {
-      "week": 7,
+      "date": "2026-10-17",
       "opponent": "Penn State",
       "espnEventId": "401858470",
       "spread": -2.5,
       "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": false, "pointsAwarded": 0 }
       }
     },
     {
-      "week": 8,
-      "opponent": "Washington",
+      "week": 7,
+      "date": "2026-10-24",
+      "opponent": "Indiana",
       "espnEventId": "401858477",
       "spread": -6.5,
       "locked": false,
@@ -260,122 +139,95 @@
       "michiganWon": null,
       "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 0
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
       }
     },
     {
-      "week": 9,
-      "opponent": "Oregon",
-      "espnEventId": "401858484",
-      "spread": 3.5,
-      "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": true,
-      "picks": {
-        "lander": {
-          "winPick": false,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        },
-        "freddy": {
-          "winPick": false,
-          "coverPick": true,
-          "pointsAwarded": 1
-        }
-      }
-    },
-    {
-      "week": 10,
+      "week": 8,
+      "date": "2026-10-31",
       "opponent": "Rutgers",
       "espnEventId": "401858491",
       "spread": -17.5,
       "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 9,
+      "date": "2026-11-07",
+      "opponent": "Michigan State",
+      "espnEventId": "401858463",
+      "spread": -14.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 10,
+      "date": "2026-11-14",
+      "opponent": "Oregon",
+      "espnEventId": "401858484",
+      "spread": 3.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": false, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": false, "coverPick": true, "pointsAwarded": 0 }
       }
     },
     {
       "week": 11,
+      "date": "2026-11-21",
+      "opponent": "UCLA",
+      "espnEventId": "401858490",
+      "spread": -10.5,
+      "locked": false,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "picks": {
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
+      }
+    },
+    {
+      "week": 12,
+      "date": "2026-11-28",
       "opponent": "Ohio State",
       "espnEventId": "401858498",
       "spread": 4.5,
       "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": true,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
       "picks": {
-        "lander": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        },
-        "juan": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        },
-        "diego": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        },
-        "freddy": {
-          "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 2
-        }
+        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
       }
     }
   ]
