@@ -101,7 +101,7 @@
       "locked": true,
       "gameFinished": true,
       "michiganWon": true,
-      "michiganCovered": false,
+      "michiganCovered": true,
       "picks": {
         "lander": {
           "winPick": true,
