@@ -13,6 +13,14 @@ with open('data.json', 'r') as f:
 updated = False
 today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
+# Map team names to common MGoBlue schedule abbreviations
+ALIASES = {
+    "UTEP": ["UTEP", "UT El Paso", "El Paso"],
+    "Michigan State": ["Michigan State", "MSU"],
+    "Penn State": ["Penn State", "PSU"],
+    "Ohio State": ["Ohio State", "OSU"]
+}
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 }
@@ -43,20 +51,21 @@ for week in data['weeks']:
     is_completed = False
 
     if html_content:
-        # Match score pattern specifically tied to opponent card
-        match = re.search(rf'{re.escape(opponent)}[\s\S]*?\b([WL])\b\s*,\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})', html_content, re.IGNORECASE)
-        
-        if match:
-            outcome, score1, score2 = match.groups()
-            s1, s2 = int(score1), int(score2)
-            is_completed = True
-            
-            if outcome.upper() == 'W':
-                m_score, o_score = max(s1, s2), min(s1, s2)
-            else:
-                m_score, o_score = min(s1, s2), max(s1, s2)
-            
-            print(f"MGoBlue Matched Result -> Michigan: {m_score}, {opponent}: {o_score}")
+        search_names = ALIASES.get(opponent, [opponent])
+        for name in search_names:
+            match = re.search(rf'{re.escape(name)}[\s\S]*?\b([WL])\b\s*,\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})', html_content, re.IGNORECASE)
+            if match:
+                outcome, score1, score2 = match.groups()
+                s1, s2 = int(score1), int(score2)
+                is_completed = True
+                
+                if outcome.upper() == 'W':
+                    m_score, o_score = max(s1, s2), min(s1, s2)
+                else:
+                    m_score, o_score = min(s1, s2), max(s1, s2)
+                
+                print(f"MGoBlue Matched Result ({name}) -> Michigan: {m_score}, {opponent}: {o_score}")
+                break
 
     if is_completed and m_score is not None and not week['gameFinished']:
         print("Calculating points for pool participants...")
