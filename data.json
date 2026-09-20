@@ -96,7 +96,7 @@
       "espnEventId": "401858442",
       "spread": -34.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
@@ -192,7 +192,7 @@
       "espnEventId": "401858463",
       "spread": -14.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
@@ -224,7 +224,7 @@
       "espnEventId": "401858470",
       "spread": -2.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
@@ -288,7 +288,7 @@
       "espnEventId": "401858484",
       "spread": 3.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": true,
       "picks": {
@@ -320,7 +320,7 @@
       "espnEventId": "401858491",
       "spread": -17.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": false,
       "picks": {
@@ -352,7 +352,7 @@
       "espnEventId": "401858498",
       "spread": 4.5,
       "locked": false,
-      "gameFinished": false,
+      "gameFinished": true,
       "michiganWon": true,
       "michiganCovered": true,
       "picks": {
