@@ -97,7 +97,7 @@
       "date": "2026-09-19",
       "opponent": "UTEP",
       "espnEventId": "401858442",
-      "spread": -28.5,
+      "spread": -34.5,
       "locked": true,
       "gameFinished": false,
       "michiganWon": true,
@@ -106,22 +106,22 @@
         "lander": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         },
         "diego": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         }
       }
     },
