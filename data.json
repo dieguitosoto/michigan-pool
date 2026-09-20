@@ -106,22 +106,22 @@
         "lander": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 1
+          "pointsAwarded": 0
         },
         "juan": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 2
+          "pointsAwarded": 0
         },
         "diego": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 2
+          "pointsAwarded": 0
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 2
+          "pointsAwarded": 0
         }
       }
     },
