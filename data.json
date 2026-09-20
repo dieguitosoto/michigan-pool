@@ -106,7 +106,7 @@
         "lander": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 2
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": true,
