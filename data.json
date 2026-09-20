@@ -67,14 +67,14 @@
       "espnEventId": "401858442",
       "spread": -28.5,
       "locked": true,
-      "gameFinished": true,
+      "gameFinished": false,
       "michiganWon": true,
       "michiganCovered": true,
       "picks": {
-        "lander": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
-        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
-        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 2 },
-        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 2 }
+        "lander": { "winPick": true, "coverPick": false, "pointsAwarded": 0 },
+        "juan": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "diego": { "winPick": true, "coverPick": true, "pointsAwarded": 0 },
+        "freddy": { "winPick": true, "coverPick": true, "pointsAwarded": 0 }
       }
     },
     {
