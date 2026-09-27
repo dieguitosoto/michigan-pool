@@ -130,7 +130,7 @@
       "date": "2026-09-26",
       "opponent": "Iowa",
       "espnEventId": "401858449",
-      "spread": -7.5,
+      "spread": -5.5,
       "locked": false,
       "gameFinished": false,
       "michiganWon": null,
@@ -138,12 +138,12 @@
       "picks": {
         "lander": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "juan": {
           "winPick": true,
-          "coverPick": false,
+          "coverPick": true,
           "pointsAwarded": 0
         },
         "diego": {
@@ -153,7 +153,7 @@
         },
         "freddy": {
           "winPick": true,
-          "coverPick": false,
+          "coverPick": true,
           "pointsAwarded": 0
         }
       }
