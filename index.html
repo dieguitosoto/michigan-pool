@@ -92,7 +92,8 @@ const avatarPlugin = {
 };
 
 async function init() {
-  const res = await fetch('data.json');
+  // Cache-busting timestamp query parameter to force fetching live data.json
+  const res = await fetch(`data.json?v=${new Date().getTime()}`);
   appData = await res.json();
   const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
 
