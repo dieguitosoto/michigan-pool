@@ -2,8 +2,8 @@ name: Michigan Pool Automation
 
 on:
   schedule:
-    - cron: '0 16 * * 5' # Every Friday at 12:00 PM EST
-    - cron: '0 12 * * 0' # Every Sunday at 8:00 AM EST
+    # Runs every Sunday at 5:00 PM EDT (21:00 UTC)
+    - cron: '0 21 * * 0'
   workflow_dispatch:
 
 jobs:
