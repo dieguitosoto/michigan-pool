@@ -2,14 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Michigan Football Pool</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f4f6f8; color: #333; }
-    h1 { text-align: center; color: #00274C; margin-bottom: 24px; }
-    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    canvas { background: white; padding: 10px; border-radius: 12px; }
+    * { box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      max-width: 950px; 
+      margin: 0 auto; 
+      padding: 12px; 
+      background: #f4f6f8; 
+      color: #333; 
+    }
+    h1 { text-align: center; color: #00274C; margin: 12px 0 20px 0; font-size: 1.5rem; }
+    .card { 
+      background: white; 
+      border-radius: 12px; 
+      padding: 16px; 
+      margin-bottom: 20px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+    }
+    .card h2 { margin-top: 0; font-size: 1.25rem; }
+
+    /* Responsive Chart Container */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 420px; /* Generous height for portrait mobile */
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 20px; }
+      h1 { font-size: 2rem; }
+      .card { padding: 24px; }
+      .chart-container { height: 500px; }
+    }
+
+    /* Auto-Rotate Fullscreen Landscape Mode for Mobile */
+    @media (orientation: landscape) and (max-height: 500px) {
+      body { padding: 0; margin: 0; max-width: 100%; background: white; }
+      h1 { display: none; }
+      .card { border-radius: 0; box-shadow: none; padding: 8px; margin: 0; }
+      .card h2 { display: none; }
+      .chart-container { height: 95vh; }
+    }
   </style>
 </head>
 <body>
@@ -18,7 +55,9 @@
 
   <div class="card">
     <h2>Cumulative Leaderboard</h2>
-    <canvas id="leaderboardChart"></canvas>
+    <div class="chart-container">
+      <canvas id="leaderboardChart"></canvas>
+    </div>
   </div>
 
 <script>
@@ -27,8 +66,9 @@ let chartInstance = null;
 
 let animationProgress = 0;
 let animationStartTime = null;
-const animationDuration = 2200;
+const animationDuration = 2000;
 
+// Progressive Reveal Plugin
 const revealPlugin = {
   id: 'revealPlugin',
   beforeDatasetsDraw(chart) {
@@ -39,7 +79,7 @@ const revealPlugin = {
     ctx.save();
     ctx.beginPath();
     const currentWidth = (chartArea.right - chartArea.left) * animationProgress;
-    ctx.rect(chartArea.left - 20, 0, currentWidth + 20, chart.height);
+    ctx.rect(chartArea.left - 30, 0, currentWidth + 30, chart.height);
     ctx.clip();
   },
   afterDatasetsDraw(chart) {
@@ -47,6 +87,7 @@ const revealPlugin = {
   }
 };
 
+// Avatar Plugin (Responsive Sizes)
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -69,8 +110,10 @@ const avatarPlugin = {
       }
     });
 
-    const size = 32;
-    const spacing = 36;
+    // Detect screen width to adjust avatar marker sizes on mobile
+    const isMobile = window.innerWidth < 600;
+    const size = isMobile ? 26 : 32;
+    const spacing = isMobile ? 28 : 36;
 
     Object.values(scoreGroups).forEach(group => {
       const count = group.length;
@@ -92,7 +135,7 @@ const avatarPlugin = {
         ctx.beginPath();
         ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
         ctx.strokeStyle = item.dataset.borderColor;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       });
     });
@@ -119,13 +162,13 @@ function animateReveal(timestamp) {
 
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
-  
+  const isMobile = window.innerWidth < 600;
+
   const detailedLabels = finishedWeeks.map(w => {
     const outcomeChar = w.michiganWon ? 'W' : 'L';
     const mScore = w.michiganScore ?? 0;
     const oScore = w.opponentScore ?? 0;
     
-    // Always list winning score first
     const winScore = Math.max(mScore, oScore);
     const loseScore = Math.min(mScore, oScore);
     const scoreFormatted = `${outcomeChar}, ${winScore}-${loseScore}`;
@@ -158,7 +201,7 @@ function renderChart() {
       data: dataPoints,
       borderColor: player.color,
       backgroundColor: player.color,
-      borderWidth: 3,
+      borderWidth: isMobile ? 2.5 : 3.5,
       avatarImg: img,
       tension: 0.1,
       pointRadius: 0
@@ -176,28 +219,29 @@ function renderChart() {
     plugins: [revealPlugin, avatarPlugin],
     options: {
       responsive: true,
+      maintainAspectRatio: false, // Allows chart container height to dictate size
       animation: false,
       layout: {
         padding: {
-          top: 10,
-          right: 35,
-          left: 15,
-          bottom: 10
+          top: 20,
+          right: isMobile ? 22 : 35,
+          left: isMobile ? 5 : 15,
+          bottom: 5
         }
       },
       plugins: {
         legend: {
-          labels: {
-            padding: 25
-          }
+          display: false // Permanently disables line color legend key
         }
       },
       scales: {
         x: {
           ticks: {
             font: {
-              size: 11
-            }
+              size: isMobile ? 10 : 12
+            },
+            maxRotation: 0,
+            minRotation: 0
           }
         },
         y: {
@@ -206,7 +250,10 @@ function renderChart() {
           ticks: {
             stepSize: 1,
             precision: 0,
-            padding: 10
+            padding: 8,
+            font: {
+              size: isMobile ? 11 : 13
+            }
           }
         }
       }
@@ -215,6 +262,11 @@ function renderChart() {
 
   requestAnimationFrame(animateReveal);
 }
+
+// Re-render chart on device orientation change / screen resize
+window.addEventListener('resize', () => {
+  if (appData.weeks) renderChart();
+});
 
 init();
 </script>
