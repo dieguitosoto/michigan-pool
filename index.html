@@ -39,7 +39,30 @@
 let appData = {};
 let chartInstance = null;
 
-// Custom plugin to draw profile pics side-by-side when scores tie
+// Progressive Reveal Plugin (Sweeps left-to-right pixel by pixel)
+let animationProgress = 0; // 0 to 1
+let animationStartTime = null;
+const animationDuration = 2200; // milliseconds
+
+const revealPlugin = {
+  id: 'revealPlugin',
+  beforeDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    if (!chartArea) return;
+
+    ctx.save();
+    ctx.beginPath();
+    const currentWidth = (chartArea.right - chartArea.left) * animationProgress;
+    ctx.rect(chartArea.left - 20, 0, currentWidth + 20, chart.height);
+    ctx.clip();
+  },
+  afterDatasetsDraw(chart) {
+    chart.ctx.restore();
+  }
+};
+
+// Custom plugin to draw profile pics ONLY on the latest completed week
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -47,47 +70,50 @@ const avatarPlugin = {
     const numPoints = chart.data.labels.length;
     if (numPoints === 0) return;
 
-    const size = 32; // Avatar diameter in pixels
-    const spacing = 36; // Horizontal offset per avatar when tied
+    // Only render avatars at the final completed week index
+    const pointIdx = numPoints - 1;
+    const scoreGroups = {};
 
-    for (let pointIdx = 0; pointIdx < numPoints; pointIdx++) {
-      const scoreGroups = {};
-
-      chart.data.datasets.forEach((dataset, datasetIdx) => {
-        const meta = chart.getDatasetMeta(datasetIdx);
-        const point = meta.data[pointIdx];
-        if (point && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
+    chart.data.datasets.forEach((dataset, datasetIdx) => {
+      const meta = chart.getDatasetMeta(datasetIdx);
+      const point = meta.data[pointIdx];
+      if (point && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
+        // Only draw avatar if the reveal mask has reached this point's X position
+        if (point.x <= (chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) * animationProgress)) {
           const val = dataset.data[pointIdx];
           if (!scoreGroups[val]) scoreGroups[val] = [];
           scoreGroups[val].push({ point, dataset });
         }
+      }
+    });
+
+    const size = 32; // Avatar diameter
+    const spacing = 36; // Horizontal offset per avatar when tied
+
+    Object.values(scoreGroups).forEach(group => {
+      const count = group.length;
+      const totalWidth = (count - 1) * spacing;
+      const startX = group[0].point.x - (totalWidth / 2);
+
+      group.forEach((item, i) => {
+        const drawX = startX + (i * spacing);
+        const drawY = item.point.y;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(item.dataset.avatarImg, drawX - size / 2, drawY - size / 2, size, size);
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = item.dataset.borderColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
       });
-
-      Object.values(scoreGroups).forEach(group => {
-        const count = group.length;
-        const totalWidth = (count - 1) * spacing;
-        const startX = group[0].point.x - (totalWidth / 2);
-
-        group.forEach((item, i) => {
-          const drawX = startX + (i * spacing);
-          const drawY = item.point.y;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.clip();
-          ctx.drawImage(item.dataset.avatarImg, drawX - size / 2, drawY - size / 2, size, size);
-          ctx.restore();
-
-          ctx.beginPath();
-          ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
-          ctx.strokeStyle = item.dataset.borderColor;
-          ctx.lineWidth = 3;
-          ctx.stroke();
-        });
-      });
-    }
+    });
   }
 };
 
@@ -129,6 +155,18 @@ async function init() {
   renderChart();
 }
 
+function animateReveal(timestamp) {
+  if (!animationStartTime) animationStartTime = timestamp;
+  const elapsed = timestamp - animationStartTime;
+  
+  animationProgress = Math.min(elapsed / animationDuration, 1);
+  if (chartInstance) chartInstance.draw();
+
+  if (animationProgress < 1) {
+    requestAnimationFrame(animateReveal);
+  }
+}
+
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
   const labels = finishedWeeks.map(w => w.opponent);
@@ -154,53 +192,22 @@ function renderChart() {
       borderWidth: 3,
       avatarImg: img,
       tension: 0.1,
-      pointRadius: 4
+      pointRadius: 0 // Hides intermediate dots for a clean line vector
     };
   });
 
   if (chartInstance) chartInstance.destroy();
 
-  const totalDuration = 2000;
-  const delayBetweenPoints = totalDuration / (labels.length || 1);
+  animationProgress = 0;
+  animationStartTime = null;
 
   chartInstance = new Chart(document.getElementById('leaderboardChart'), {
     type: 'line',
     data: { labels, datasets },
-    plugins: [avatarPlugin],
+    plugins: [revealPlugin, avatarPlugin],
     options: {
       responsive: true,
-      animation: {
-        x: {
-          type: 'number',
-          easing: 'linear',
-          duration: delayBetweenPoints,
-          from: NaN,
-          delay(ctx) {
-            if (ctx.type !== 'data' || ctx.xStarted) {
-              return 0;
-            }
-            ctx.xStarted = true;
-            return ctx.index * delayBetweenPoints;
-          }
-        },
-        y: {
-          type: 'number',
-          easing: 'linear',
-          duration: delayBetweenPoints,
-          from(ctx) {
-            return ctx.index === 0 
-              ? ctx.chart.scales.y.getPixelForValue(0) 
-              : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
-          },
-          delay(ctx) {
-            if (ctx.type !== 'data' || ctx.yStarted) {
-              return 0;
-            }
-            ctx.yStarted = true;
-            return ctx.index * delayBetweenPoints;
-          }
-        }
-      },
+      animation: false, // Disables built-in Chart.js physics so revealPlugin handles smooth rendering
       layout: {
         padding: {
           top: 10,
@@ -229,6 +236,8 @@ function renderChart() {
       }
     }
   });
+
+  requestAnimationFrame(animateReveal);
 }
 
 init();
