@@ -15,7 +15,7 @@
       background: #f4f6f8; 
       color: #333; 
     }
-    h1 { text-align: center; color: #00274C; margin: 12px 0 20px 0; font-size: 1.5rem; }
+    h1 { text-align: center; color: #00274C; margin: 12px 0 16px 0; font-size: 1.5rem; }
     .card { 
       background: white; 
       border-radius: 12px; 
@@ -23,29 +23,30 @@
       margin-bottom: 20px; 
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
     }
-    .card h2 { margin-top: 0; font-size: 1.25rem; }
+    .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
 
     /* Responsive Chart Container */
     .chart-container {
       position: relative;
       width: 100%;
-      height: 420px;
+      height: 400px; /* Default height for portrait mobile */
     }
 
     @media (min-width: 768px) {
       body { padding: 20px; }
       h1 { font-size: 2rem; }
       .card { padding: 24px; }
-      .chart-container { height: 500px; }
+      .card h2 { text-align: left; font-size: 1.35rem; }
+      .chart-container { height: 480px; }
     }
 
-    /* Auto-Rotate Fullscreen Landscape Mode for Mobile Devices */
+    /* Landscape Mode Fix for Mobile Phones */
     @media (orientation: landscape) and (max-height: 500px) {
-      body { padding: 0; margin: 0; max-width: 100%; background: white; }
-      h1 { display: none; }
-      .card { border-radius: 0; box-shadow: none; padding: 4px; margin: 0; }
-      .card h2 { display: none; }
-      .chart-container { height: calc(100vh - 12px); }
+      body { padding: 6px; }
+      h1 { display: none; } /* Hide large page header in landscape to save vertical space */
+      .card { padding: 10px 14px; margin-bottom: 0; }
+      .card h2 { display: block; font-size: 1rem; margin-bottom: 6px; } /* Keep chart title visible */
+      .chart-container { height: 260px; } /* Scaled height so top title and bottom labels fit completely */
     }
   </style>
 </head>
@@ -110,9 +111,12 @@ const avatarPlugin = {
       }
     });
 
-    const isMobile = window.innerWidth < 600 || window.innerHeight < 500;
-    const size = isMobile ? 24 : 32;
-    const spacing = isMobile ? 26 : 36;
+    const isLandscapeMobile = window.innerHeight < 500;
+    const isMobile = window.innerWidth < 600 || isLandscapeMobile;
+    
+    // Scale avatars down slightly in landscape mode to prevent crowding
+    const size = isLandscapeMobile ? 22 : (isMobile ? 25 : 32);
+    const spacing = isLandscapeMobile ? 24 : (isMobile ? 28 : 36);
 
     Object.values(scoreGroups).forEach(group => {
       const count = group.length;
@@ -201,7 +205,7 @@ function renderChart() {
       data: dataPoints,
       borderColor: player.color,
       backgroundColor: player.color,
-      borderWidth: isMobile ? 2.5 : 3.5,
+      borderWidth: isLandscapeMobile ? 2 : (isMobile ? 2.5 : 3.5),
       avatarImg: img,
       tension: 0.1,
       pointRadius: 0
@@ -223,10 +227,10 @@ function renderChart() {
       animation: false,
       layout: {
         padding: {
-          top: 15,
-          right: isMobile ? 32 : 40,
+          top: 10,
+          right: isLandscapeMobile ? 28 : (isMobile ? 32 : 40),
           left: isMobile ? 5 : 15,
-          bottom: isLandscapeMobile ? 25 : 10
+          bottom: 5
         }
       },
       plugins: {
@@ -238,7 +242,7 @@ function renderChart() {
         x: {
           ticks: {
             font: {
-              size: isLandscapeMobile ? 9 : (isMobile ? 10 : 12)
+              size: isLandscapeMobile ? 8.5 : (isMobile ? 10 : 12)
             },
             maxRotation: 0,
             minRotation: 0
@@ -252,7 +256,7 @@ function renderChart() {
             precision: 0,
             padding: 6,
             font: {
-              size: isLandscapeMobile ? 10 : (isMobile ? 11 : 13)
+              size: isLandscapeMobile ? 9.5 : (isMobile ? 11 : 13)
             }
           }
         }
