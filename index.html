@@ -29,7 +29,7 @@
     .chart-container {
       position: relative;
       width: 100%;
-      height: 420px; /* Generous height for portrait mobile */
+      height: 420px;
     }
 
     @media (min-width: 768px) {
@@ -39,13 +39,13 @@
       .chart-container { height: 500px; }
     }
 
-    /* Auto-Rotate Fullscreen Landscape Mode for Mobile */
+    /* Auto-Rotate Fullscreen Landscape Mode for Mobile Devices */
     @media (orientation: landscape) and (max-height: 500px) {
       body { padding: 0; margin: 0; max-width: 100%; background: white; }
       h1 { display: none; }
-      .card { border-radius: 0; box-shadow: none; padding: 8px; margin: 0; }
+      .card { border-radius: 0; box-shadow: none; padding: 4px; margin: 0; }
       .card h2 { display: none; }
-      .chart-container { height: 95vh; }
+      .chart-container { height: calc(100vh - 12px); }
     }
   </style>
 </head>
@@ -87,7 +87,7 @@ const revealPlugin = {
   }
 };
 
-// Avatar Plugin (Responsive Sizes)
+// Avatar Plugin
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -110,10 +110,9 @@ const avatarPlugin = {
       }
     });
 
-    // Detect screen width to adjust avatar marker sizes on mobile
-    const isMobile = window.innerWidth < 600;
-    const size = isMobile ? 26 : 32;
-    const spacing = isMobile ? 28 : 36;
+    const isMobile = window.innerWidth < 600 || window.innerHeight < 500;
+    const size = isMobile ? 24 : 32;
+    const spacing = isMobile ? 26 : 36;
 
     Object.values(scoreGroups).forEach(group => {
       const count = group.length;
@@ -162,7 +161,8 @@ function animateReveal(timestamp) {
 
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
-  const isMobile = window.innerWidth < 600;
+  const isLandscapeMobile = window.innerHeight < 500;
+  const isMobile = window.innerWidth < 600 || isLandscapeMobile;
 
   const detailedLabels = finishedWeeks.map(w => {
     const outcomeChar = w.michiganWon ? 'W' : 'L';
@@ -219,26 +219,26 @@ function renderChart() {
     plugins: [revealPlugin, avatarPlugin],
     options: {
       responsive: true,
-      maintainAspectRatio: false, // Allows chart container height to dictate size
+      maintainAspectRatio: false,
       animation: false,
       layout: {
         padding: {
-          top: 20,
-          right: isMobile ? 22 : 35,
+          top: 15,
+          right: isMobile ? 32 : 40,
           left: isMobile ? 5 : 15,
-          bottom: 5
+          bottom: isLandscapeMobile ? 25 : 10
         }
       },
       plugins: {
         legend: {
-          display: false // Permanently disables line color legend key
+          display: false
         }
       },
       scales: {
         x: {
           ticks: {
             font: {
-              size: isMobile ? 10 : 12
+              size: isLandscapeMobile ? 9 : (isMobile ? 10 : 12)
             },
             maxRotation: 0,
             minRotation: 0
@@ -250,9 +250,9 @@ function renderChart() {
           ticks: {
             stepSize: 1,
             precision: 0,
-            padding: 8,
+            padding: 6,
             font: {
-              size: isMobile ? 11 : 13
+              size: isLandscapeMobile ? 10 : (isMobile ? 11 : 13)
             }
           }
         }
@@ -263,7 +263,6 @@ function renderChart() {
   requestAnimationFrame(animateReveal);
 }
 
-// Re-render chart on device orientation change / screen resize
 window.addEventListener('resize', () => {
   if (appData.weeks) renderChart();
 });
