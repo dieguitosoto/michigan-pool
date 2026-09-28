@@ -13,7 +13,6 @@ with open('data.json', 'r') as f:
 updated = False
 today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
-# Map your opponent keys to possible MGoBlue site variations
 OPPONENT_ALIASES = {
     "Western Michigan": ["Western Michigan", "WMU"],
     "Oklahoma": ["Oklahoma", "OU"],
@@ -41,7 +40,6 @@ try:
 except Exception as e:
     print(f"Error fetching MGoBlue schedule page: {e}")
 
-# Strip tags to create clean searchable text
 clean_text = re.sub(r'<[^>]+>', ' ', raw_html)
 clean_text = ' '.join(clean_text.split())
 
@@ -65,7 +63,6 @@ for week in data['weeks']:
     aliases = OPPONENT_ALIASES.get(opponent, [opponent])
     
     for alias in aliases:
-        # Pattern matches: Alias ... W/L , 20-19 OR Alias ... 20-19
         pattern = rf'{re.escape(alias)}[\s\S]*?\b([WL])?\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
         match = re.search(pattern, clean_text, re.IGNORECASE)
         
@@ -73,13 +70,11 @@ for week in data['weeks']:
             outcome, s1_str, s2_str = match.groups()
             s1, s2 = int(s1_str), int(s2_str)
             
-            # Determine score order
             if outcome and outcome.upper() == 'W':
                 m_score, o_score = max(s1, s2), min(s1, s2)
             elif outcome and outcome.upper() == 'L':
                 m_score, o_score = min(s1, s2), max(s1, s2)
             else:
-                # If W/L indicator isn't explicitly captured, check score magnitude or assume standard order
                 m_score, o_score = s1, s2
                 
             is_completed = True
@@ -97,6 +92,8 @@ for week in data['weeks']:
 
         week['michiganWon'] = mich_won
         week['michiganCovered'] = mich_covered
+        week['michiganScore'] = m_score
+        week['opponentScore'] = o_score
         week['gameFinished'] = True
         updated = True
 
@@ -109,11 +106,9 @@ for week in data['weeks']:
             pick['pointsAwarded'] = pts
             print(f"Player {pid}: {pts} points awarded")
 
-# Save updated JSON database
 with open('data.json', 'w') as f:
     json.dump(data, f, indent=2)
 
-# Send Notification Email
 if updated and resend.api_key:
     print("Dispatching Resend email notification...")
     email_res = resend.Emails.send({
