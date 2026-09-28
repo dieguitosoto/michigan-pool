@@ -13,11 +13,19 @@ with open('data.json', 'r') as f:
 updated = False
 today_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
-# Opponent name aliases on MGoBlue
-ALIASES = {
+# Map your opponent keys to possible MGoBlue site variations
+OPPONENT_ALIASES = {
+    "Western Michigan": ["Western Michigan", "WMU"],
+    "Oklahoma": ["Oklahoma", "OU"],
     "UTEP": ["UTEP", "UT El Paso", "El Paso"],
-    "Michigan State": ["Michigan State", "MSU"],
+    "Iowa": ["Iowa", "Iowa (B1G)"],
+    "Minnesota": ["Minnesota"],
     "Penn State": ["Penn State", "PSU"],
+    "Indiana": ["Indiana"],
+    "Rutgers": ["Rutgers"],
+    "Michigan State": ["Michigan State", "MSU"],
+    "Oregon": ["Oregon"],
+    "UCLA": ["UCLA"],
     "Ohio State": ["Ohio State", "OSU"]
 }
 
@@ -25,13 +33,17 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 }
 
-html_content = ""
+raw_html = ""
 try:
     res = requests.get("https://mgoblue.com/sports/football/schedule", headers=headers, timeout=15)
     if res.status_code == 200:
-        html_content = res.text
+        raw_html = res.text
 except Exception as e:
     print(f"Error fetching MGoBlue schedule page: {e}")
+
+# Strip tags to create clean searchable text
+clean_text = re.sub(r'<[^>]+>', ' ', raw_html)
+clean_text = ' '.join(clean_text.split())
 
 for week in data['weeks']:
     if week['gameFinished']:
@@ -50,32 +62,31 @@ for week in data['weeks']:
     o_score = None
     is_completed = False
 
-    if html_content:
-        search_names = ALIASES.get(opponent, [opponent])
-        for name in search_names:
-            # Flexible pattern matching W/L score strings
-            match = re.search(rf'{re.escape(name)}[\s\S]*?\b([WL])\b\s*,\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})', html_content, re.IGNORECASE)
-            if match:
-                outcome, score1, score2 = match.groups()
-                s1, s2 = int(score1), int(score2)
-                is_completed = True
+    aliases = OPPONENT_ALIASES.get(opponent, [opponent])
+    
+    for alias in aliases:
+        # Pattern matches: Alias ... W/L , 20-19 OR Alias ... 20-19
+        pattern = rf'{re.escape(alias)}[\s\S]*?\b([WL])?\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
+        match = re.search(pattern, clean_text, re.IGNORECASE)
+        
+        if match:
+            outcome, s1_str, s2_str = match.groups()
+            s1, s2 = int(s1_str), int(s2_str)
+            
+            # Determine score order
+            if outcome and outcome.upper() == 'W':
+                m_score, o_score = max(s1, s2), min(s1, s2)
+            elif outcome and outcome.upper() == 'L':
+                m_score, o_score = min(s1, s2), max(s1, s2)
+            else:
+                # If W/L indicator isn't explicitly captured, check score magnitude or assume standard order
+                m_score, o_score = s1, s2
                 
-                if outcome.upper() == 'W':
-                    m_score, o_score = max(s1, s2), min(s1, s2)
-                else:
-                    m_score, o_score = min(s1, s2), max(s1, s2)
-                
-                print(f"MGoBlue Matched Result ({name}) -> Michigan: {m_score}, {opponent}: {o_score}")
-                break
+            is_completed = True
+            print(f"MGoBlue Match Found ({alias}) -> Michigan: {m_score}, {opponent}: {o_score}")
+            break
 
-    # Fallback override for Week 3 if MGoBlue formatting varies
-    if not is_completed and week['week'] == 3 and game_date_str <= today_str:
-        is_completed = True
-        m_score = 31
-        o_score = 10
-        print(f"Fallback Result Applied for Week 3 -> Michigan: {m_score}, {opponent}: {o_score}")
-
-    if is_completed and m_score is not None and not week['gameFinished']:
+    if is_completed and m_score is not None and o_score is not None and not week['gameFinished']:
         print("Calculating points for pool participants...")
         
         mich_won = m_score > o_score
