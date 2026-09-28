@@ -92,7 +92,6 @@ const avatarPlugin = {
 };
 
 async function init() {
-  // Cache-busting parameter to prevent browser caching of live data.json
   const res = await fetch(`data.json?v=${new Date().getTime()}`);
   appData = await res.json();
   const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
@@ -161,24 +160,59 @@ function renderChart() {
 
   if (chartInstance) chartInstance.destroy();
 
+  const totalDuration = 2000;
+  const delayBetweenPoints = totalDuration / (labels.length || 1);
+
   chartInstance = new Chart(document.getElementById('leaderboardChart'), {
     type: 'line',
     data: { labels, datasets },
     plugins: [avatarPlugin],
     options: {
       responsive: true,
+      animation: {
+        x: {
+          type: 'number',
+          easing: 'linear',
+          duration: delayBetweenPoints,
+          from: NaN,
+          delay(ctx) {
+            if (ctx.type !== 'data' || ctx.xStarted) {
+              return 0;
+            }
+            ctx.xStarted = true;
+            return ctx.index * delayBetweenPoints;
+          }
+        },
+        y: {
+          type: 'number',
+          easing: 'linear',
+          duration: delayBetweenPoints,
+          from(ctx) {
+            return ctx.index === 0 
+              ? ctx.chart.scales.y.getPixelForValue(0) 
+              : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
+          },
+          delay(ctx) {
+            if (ctx.type !== 'data' || ctx.yStarted) {
+              return 0;
+            }
+            ctx.yStarted = true;
+            return ctx.index * delayBetweenPoints;
+          }
+        }
+      },
       layout: {
         padding: {
           top: 10,
-          right: 35, // Prevents rightmost avatar markers from clipping
-          left: 15,  // Extra margin for Y-axis numbers
+          right: 35,
+          left: 15,
           bottom: 10
         }
       },
       plugins: {
         legend: {
           labels: {
-            padding: 25 // Pushes legend up away from top markers
+            padding: 25
           }
         }
       },
@@ -189,7 +223,7 @@ function renderChart() {
           ticks: {
             stepSize: 1,
             precision: 0,
-            padding: 10 // Pushes numbers left of line start
+            padding: 10
           }
         }
       }
