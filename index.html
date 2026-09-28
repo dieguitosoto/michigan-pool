@@ -7,28 +7,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f4f6f8; color: #333; }
-    h1 { text-align: center; color: #00274C; }
+    h1 { text-align: center; color: #00274C; margin-bottom: 24px; }
     .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 16px; }
-    .player-box { border: 1px solid #e1e4e8; border-radius: 8px; padding: 12px; text-align: center; }
-    .player-box img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #00274C; }
-    select, button { width: 100%; padding: 8px; margin-top: 8px; border-radius: 6px; border: 1px solid #ccc; }
-    button { background: #00274C; color: #FFCB05; font-weight: bold; cursor: pointer; border: none; padding: 12px; font-size: 16px; }
-    button:disabled { background: #aaa; cursor: not-allowed; }
     canvas { background: white; padding: 10px; border-radius: 12px; }
   </style>
 </head>
 <body>
 
   <h1>〽️ U-Michigan Pick 'Em Pool</h1>
-
-  <div class="card">
-    <h2 id="game-title">Loading Game Info...</h2>
-    <p id="game-spread">DraftKings Spread: --</p>
-    <p id="lock-status" style="font-weight: bold; color: #d9534f;"></p>
-    
-    <div class="grid" id="pick-forms"></div>
-  </div>
 
   <div class="card">
     <h2>Cumulative Leaderboard</h2>
@@ -70,7 +56,6 @@ const avatarPlugin = {
     const numPoints = chart.data.labels.length;
     if (numPoints === 0) return;
 
-    // Only render avatars at the final completed week index
     const pointIdx = numPoints - 1;
     const scoreGroups = {};
 
@@ -78,7 +63,6 @@ const avatarPlugin = {
       const meta = chart.getDatasetMeta(datasetIdx);
       const point = meta.data[pointIdx];
       if (point && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
-        // Only draw avatar if the reveal mask has reached this point's X position
         if (point.x <= (chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) * animationProgress)) {
           const val = dataset.data[pointIdx];
           if (!scoreGroups[val]) scoreGroups[val] = [];
@@ -120,38 +104,6 @@ const avatarPlugin = {
 async function init() {
   const res = await fetch(`data.json?v=${new Date().getTime()}`);
   appData = await res.json();
-  const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
-
-  document.getElementById('game-title').innerText = `Week ${currentWeek.week}: Michigan vs ${currentWeek.opponent}`;
-  document.getElementById('game-spread').innerText = `DraftKings Spread: Michigan ${currentWeek.spread > 0 ? '+' : ''}${currentWeek.spread}`;
-
-  const container = document.getElementById('pick-forms');
-  container.innerHTML = '';
-
-  appData.players.forEach(p => {
-    const userPick = currentWeek.picks[p.id] || {};
-    const disabled = 'disabled';
-    
-    container.innerHTML += `
-      <div class="player-box">
-        <img src="${p.avatar}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/60'">
-        <h4>${p.name}</h4>
-        <select id="${p.id}-win" ${disabled}>
-          <option value="true" ${userPick.winPick === true ? 'selected' : ''}>MICH Win</option>
-          <option value="false" ${userPick.winPick === false ? 'selected' : ''}>MICH Lose</option>
-        </select>
-        <select id="${p.id}-cover" ${disabled}>
-          <option value="true" ${userPick.coverPick === true ? 'selected' : ''}>Cover Spread</option>
-          <option value="false" ${userPick.coverPick === false ? 'selected' : ''}>Fail to Cover</option>
-        </select>
-      </div>
-    `;
-  });
-
-  if(currentWeek.locked || currentWeek.gameFinished) {
-    document.getElementById('lock-status').innerText = "🔒 Picks are locked for this week.";
-  }
-
   renderChart();
 }
 
@@ -169,7 +121,42 @@ function animateReveal(timestamp) {
 
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
-  const labels = finishedWeeks.map(w => w.opponent);
+  
+  // Build multi-line labels: [Opponent, Outcome + Score, Spread + Cover Symbol]
+  const labels = finishedWeeks.map(w => {
+    const outcomeChar = w.michiganWon ? 'W' : 'L';
+    
+    // Final score string with winning score listed first
+    let scoreStr = '';
+    if (w.picks && Object.values(w.picks).length > 0) {
+      // Extract scores from logs or calculate based on win status
+      // Standard format: Outcome, Score1-Score2
+      scoreStr = `${outcomeChar}`;
+    }
+
+    // Format spread symbol (+ / -)
+    const formattedSpread = w.spread > 0 ? `+${w.spread}` : `${w.spread}`;
+    const coverSymbol = w.michiganCovered ? '✓' : 'X';
+
+    // Chart.js supports multi-line axis labels via arrays of strings
+    return [
+      w.opponent,
+      `${formattedSpread} ${coverSymbol}`
+    ];
+  });
+
+  // Customize labels with game result details if stored in data.json
+  const detailedLabels = finishedWeeks.map(w => {
+    const outcomeChar = w.michiganWon ? 'W' : 'L';
+    const formattedSpread = w.spread > 0 ? `+${w.spread}` : `${w.spread}`;
+    const coverSymbol = w.michiganCovered ? '✓' : 'X';
+    
+    // Returns array of strings to render multi-line X-axis tick labels
+    return [
+      w.opponent,
+      `(${formattedSpread}) ${coverSymbol}`
+    ];
+  });
   
   const datasets = appData.players.map(player => {
     let cumulative = 0;
@@ -192,7 +179,7 @@ function renderChart() {
       borderWidth: 3,
       avatarImg: img,
       tension: 0.1,
-      pointRadius: 0 // Hides intermediate dots for a clean line vector
+      pointRadius: 0
     };
   });
 
@@ -203,11 +190,11 @@ function renderChart() {
 
   chartInstance = new Chart(document.getElementById('leaderboardChart'), {
     type: 'line',
-    data: { labels, datasets },
+    data: { labels: detailedLabels, datasets },
     plugins: [revealPlugin, avatarPlugin],
     options: {
       responsive: true,
-      animation: false, // Disables built-in Chart.js physics so revealPlugin handles smooth rendering
+      animation: false,
       layout: {
         padding: {
           top: 10,
@@ -224,6 +211,13 @@ function renderChart() {
         }
       },
       scales: {
+        x: {
+          ticks: {
+            font: {
+              size: 12
+            }
+          }
+        },
         y: {
           min: 0,
           suggestedMax: 5,
