@@ -92,7 +92,7 @@ const avatarPlugin = {
 };
 
 async function init() {
-  // Cache-busting timestamp query parameter to force fetching live data.json
+  // Cache-busting parameter to prevent browser caching of live data.json
   const res = await fetch(`data.json?v=${new Date().getTime()}`);
   appData = await res.json();
   const currentWeek = appData.weeks.find(w => !w.gameFinished) || appData.weeks[appData.weeks.length - 1];
@@ -167,11 +167,30 @@ function renderChart() {
     plugins: [avatarPlugin],
     options: {
       responsive: true,
+      layout: {
+        padding: {
+          top: 10,
+          right: 35, // Prevents rightmost avatar markers from clipping
+          left: 15,  // Extra margin for Y-axis numbers
+          bottom: 10
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            padding: 25 // Pushes legend up away from top markers
+          }
+        }
+      },
       scales: {
         y: {
           min: 0,
-          suggestedMax: 4,
-          ticks: { stepSize: 1, precision: 0 }
+          suggestedMax: 5,
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            padding: 10 // Pushes numbers left of line start
+          }
         }
       }
     }
