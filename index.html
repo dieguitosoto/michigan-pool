@@ -25,10 +25,9 @@
 let appData = {};
 let chartInstance = null;
 
-// Progressive Reveal Plugin (Sweeps left-to-right pixel by pixel)
-let animationProgress = 0; // 0 to 1
+let animationProgress = 0;
 let animationStartTime = null;
-const animationDuration = 2200; // milliseconds
+const animationDuration = 2200;
 
 const revealPlugin = {
   id: 'revealPlugin',
@@ -48,7 +47,6 @@ const revealPlugin = {
   }
 };
 
-// Custom plugin to draw profile pics ONLY on the latest completed week
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -71,8 +69,8 @@ const avatarPlugin = {
       }
     });
 
-    const size = 32; // Avatar diameter
-    const spacing = 36; // Horizontal offset per avatar when tied
+    const size = 32;
+    const spacing = 36;
 
     Object.values(scoreGroups).forEach(group => {
       const count = group.length;
@@ -122,38 +120,22 @@ function animateReveal(timestamp) {
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
   
-  // Build multi-line labels: [Opponent, Outcome + Score, Spread + Cover Symbol]
-  const labels = finishedWeeks.map(w => {
-    const outcomeChar = w.michiganWon ? 'W' : 'L';
-    
-    // Final score string with winning score listed first
-    let scoreStr = '';
-    if (w.picks && Object.values(w.picks).length > 0) {
-      // Extract scores from logs or calculate based on win status
-      // Standard format: Outcome, Score1-Score2
-      scoreStr = `${outcomeChar}`;
-    }
-
-    // Format spread symbol (+ / -)
-    const formattedSpread = w.spread > 0 ? `+${w.spread}` : `${w.spread}`;
-    const coverSymbol = w.michiganCovered ? '✓' : 'X';
-
-    // Chart.js supports multi-line axis labels via arrays of strings
-    return [
-      w.opponent,
-      `${formattedSpread} ${coverSymbol}`
-    ];
-  });
-
-  // Customize labels with game result details if stored in data.json
   const detailedLabels = finishedWeeks.map(w => {
     const outcomeChar = w.michiganWon ? 'W' : 'L';
+    const mScore = w.michiganScore ?? 0;
+    const oScore = w.opponentScore ?? 0;
+    
+    // Always list winning score first
+    const winScore = Math.max(mScore, oScore);
+    const loseScore = Math.min(mScore, oScore);
+    const scoreFormatted = `${outcomeChar}, ${winScore}-${loseScore}`;
+
     const formattedSpread = w.spread > 0 ? `+${w.spread}` : `${w.spread}`;
     const coverSymbol = w.michiganCovered ? '✓' : 'X';
     
-    // Returns array of strings to render multi-line X-axis tick labels
     return [
       w.opponent,
+      scoreFormatted,
       `(${formattedSpread}) ${coverSymbol}`
     ];
   });
@@ -214,7 +196,7 @@ function renderChart() {
         x: {
           ticks: {
             font: {
-              size: 12
+              size: 11
             }
           }
         },
