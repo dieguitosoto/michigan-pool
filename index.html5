@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Michigan Football Pool</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      max-width: 950px; 
+      margin: 0 auto; 
+      padding: 12px; 
+      background: #f4f6f8; 
+      color: #333; 
+    }
+    h1 { text-align: center; color: #00274C; margin: 12px 0 16px 0; font-size: 1.5rem; }
+    .card { 
+      background: white; 
+      border-radius: 12px; 
+      padding: 16px; 
+      margin-bottom: 20px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+    }
+    .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
+
+    /* Horizontal Scroll Wrapper */
+    .chart-scroll-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    .chart-inner-container {
+      position: relative;
+      height: 400px;
+      min-width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      body { padding: 20px; }
+      h1 { font-size: 2rem; }
+      .card { padding: 24px; }
+      .card h2 { text-align: left; font-size: 1.35rem; }
+      .chart-inner-container { height: 480px; }
+    }
+
+    /* Landscape Mode Fix for Mobile Phones */
+    @media (orientation: landscape) and (max-height: 500px) {
+      body { padding: 6px; }
+      h1 { display: none; }
+      .card { padding: 10px 14px; margin-bottom: 0; }
+      .card h2 { display: block; font-size: 1rem; margin-bottom: 6px; }
+      .chart-inner-container { height: 260px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>〽️ U-Michigan Pick 'Em Pool</h1>
+
+  <div class="card">
+    <h2>Cumulative Leaderboard</h2>
+    <div class="chart-scroll-wrapper" id="scrollWrapper">
+      <div class="chart-inner-container" id="innerContainer">
+        <canvas id="leaderboardChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+<script>
+let appData = {};
+let chartInstance = null;
+
+let animationProgress = 0;
+let animationStartTime = null;
+const animationDuration = 2200;
+
+// Progressive Reveal Plugin
+const revealPlugin = {
+  id: 'revealPlugin',
+  beforeDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    if (!chartArea) return;
+
+    ctx.save();
+    ctx.beginPath();
+    const currentWidth = (chartArea.right - chartArea.left) * animationProgress;
+    ctx.rect(chartArea.left - 30, 0, currentWidth + 30, chart.height);
+    ctx.clip();
+  },
+  afterDatasetsDraw(chart) {
+    chart.ctx.restore();
+  }
+};
+
+// Avatar Plugin
+const avatarPlugin = {
+  id: 'avatarPlugin',
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    const numPoints = chart.data.labels.length;
+    if (numPoints === 0) return;
+
+    const pointIdx = numPoints - 1;
+    const scoreGroups = {};
+
+    chart.data.datasets.forEach((dataset, datasetIdx) => {
+      const meta = chart.getDatasetMeta(datasetIdx);
+      const point = meta.data[pointIdx];
+      if (point && dataset.avatarImg && dataset.avatarImg.complete && dataset.avatarImg.naturalWidth !== 0) {
+        if (point.x <= (chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) * animationProgress)) {
+          const val = dataset.data[pointIdx];
+          if (!scoreGroups[val]) scoreGroups[val] = [];
+          scoreGroups[val].push({ point, dataset });
+        }
+      }
+    });
+
+    const isLandscapeMobile = window.innerHeight < 500;
+    const isMobile = window.innerWidth < 600 || isLandscapeMobile;
+    
+    const size = isLandscapeMobile ? 22 : (isMobile ? 25 : 32);
+    const spacing = isLandscapeMobile ? 24 : (isMobile ? 28 : 36);
+
+    Object.values(scoreGroups).forEach(group => {
+      const count = group.length;
+      const totalWidth = (count - 1) * spacing;
+      const startX = group[0].point.x - (totalWidth / 2);
+
+      group.forEach((item, i) => {
+        const drawX = startX + (i * spacing);
+        const drawY = item.point.y;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(item.dataset.avatarImg, drawX - size / 2, drawY - size / 2, size, size);
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, size / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = item.dataset.borderColor;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+      });
+    });
+  }
+};
+
+async function init() {
+  const res = await fetch(`data.json?v=${new Date().getTime()}`);
+  appData = await res.json();
+  renderChart();
+}
+
+function animateReveal(timestamp) {
+  if (!animationStartTime) animationStartTime = timestamp;
+  const elapsed = timestamp - animationStartTime;
+  
+  animationProgress = Math.min(elapsed / animationDuration, 1);
+  if (chartInstance) chartInstance.draw();
+
+  // Synchronized Auto-Scroll Camera Movement
+  const wrapper = document.getElementById('scrollWrapper');
+  if (wrapper && chartInstance && chartInstance.chartArea) {
+    const chartArea = chartInstance.chartArea;
+    const currentLineX = chartArea.left + (chartArea.right - chartArea.left) * animationProgress;
+    const targetScroll = currentLineX - (wrapper.clientWidth / 2);
+    
+    if (targetScroll > 0) {
+      wrapper.scrollLeft = targetScroll;
+    }
+  }
+
+  if (animationProgress < 1) {
+    requestAnimationFrame(animateReveal);
+  }
+}
+
+function renderChart() {
+  const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
+  const isLandscapeMobile = window.innerHeight < 500;
+  const isMobile = window.innerWidth < 600 || isLandscapeMobile;
+
+  // Dynamically set inner canvas width if there are enough weeks to require scrolling
+  const innerContainer = document.getElementById('innerContainer');
+  const minPixelsPerWeek = isMobile ? 85 : 120;
+  const calculatedWidth = finishedWeeks.length * minPixelsPerWeek;
+  
+  if (innerContainer) {
+    innerContainer.style.minWidth = `${Math.max(calculatedWidth, innerContainer.parentElement.clientWidth)}px`;
+  }
+
+  const detailedLabels = finishedWeeks.map(w => {
+    const outcomeChar = w.michiganWon ? 'W' : 'L';
+    const mScore = w.michiganScore ?? 0;
+    const oScore = w.opponentScore ?? 0;
+    
+    const winScore = Math.max(mScore, oScore);
+    const loseScore = Math.min(mScore, oScore);
+    const scoreFormatted = `${outcomeChar}, ${winScore}-${loseScore}`;
+
+    const formattedSpread = w.spread > 0 ? `+${w.spread}` : `${w.spread}`;
+    const coverSymbol = w.michiganCovered ? '✓' : 'X';
+    
+    return [
+      w.opponent,
+      scoreFormatted,
+      `(${formattedSpread}) ${coverSymbol}`
+    ];
+  });
+  
+  const datasets = appData.players.map(player => {
+    let cumulative = 0;
+    const dataPoints = [];
+    
+    finishedWeeks.forEach(w => {
+      cumulative += (w.picks[player.id]?.pointsAwarded || 0);
+      dataPoints.push(cumulative);
+    });
+
+    const img = new Image();
+    img.src = player.avatar;
+    img.onload = () => { if (chartInstance) chartInstance.draw(); };
+
+    return {
+      label: player.name,
+      data: dataPoints,
+      borderColor: player.color,
+      backgroundColor: player.color,
+      borderWidth: isLandscapeMobile ? 2 : (isMobile ? 2.5 : 3.5),
+      avatarImg: img,
+      tension: 0.1,
+      pointRadius: 0
+    };
+  });
+
+  if (chartInstance) chartInstance.destroy();
+
+  animationProgress = 0;
+  animationStartTime = null;
+
+  chartInstance = new Chart(document.getElementById('leaderboardChart'), {
+    type: 'line',
+    data: { labels: detailedLabels, datasets },
+    plugins: [revealPlugin, avatarPlugin],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      layout: {
+        padding: {
+          top: 10,
+          right: isLandscapeMobile ? 28 : (isMobile ? 32 : 40),
+          left: isMobile ? 5 : 15,
+          bottom: 5
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            font: {
+              size: isLandscapeMobile ? 8.5 : (isMobile ? 10 : 12)
+            },
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
+        y: {
+          min: 0,
+          suggestedMax: 5,
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            padding: 6,
+            font: {
+              size: isLandscapeMobile ? 9.5 : (isMobile ? 11 : 13)
+            }
+          }
+        }
+      }
+    }
+  });
+
+  requestAnimationFrame(animateReveal);
+}
+
+window.addEventListener('resize', () => {
+  if (appData.weeks) renderChart();
+});
+
+init();
+</script>
+</body>
+</html>
