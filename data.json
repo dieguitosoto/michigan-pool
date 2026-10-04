@@ -168,11 +168,11 @@
       "opponent": "Minnesota",
       "spread": -5.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": false,
+      "michiganCovered": false,
+      "michiganScore": 14,
+      "opponentScore": 20,
       "picks": {
         "lander": {
           "winPick": true,
