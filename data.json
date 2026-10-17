@@ -200,7 +200,7 @@
       "week": 6,
       "date": "2026-10-17",
       "opponent": "Penn State",
-      "spread": -2.5,
+      "spread": -6.5,
       "locked": false,
       "gameFinished": false,
       "michiganWon": null,
@@ -210,11 +210,11 @@
       "picks": {
         "lander": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "juan": {
-          "winPick": true,
+          "winPick": false,
           "coverPick": false,
           "pointsAwarded": 0
         },
@@ -225,7 +225,7 @@
         },
         "freddy": {
           "winPick": true,
-          "coverPick": false,
+          "coverPick": true,
           "pointsAwarded": 0
         }
       }
