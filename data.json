@@ -202,31 +202,31 @@
       "opponent": "Penn State",
       "spread": -6.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": true,
+      "michiganCovered": false,
+      "michiganScore": 21,
+      "opponentScore": 18,
       "picks": {
         "lander": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         },
         "juan": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "diego": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         }
       }
     },
