@@ -234,7 +234,7 @@
       "week": 7,
       "date": "2026-10-24",
       "opponent": "Indiana",
-      "spread": -6.5,
+      "spread": +7.5,
       "locked": false,
       "gameFinished": false,
       "michiganWon": null,
@@ -248,13 +248,13 @@
           "pointsAwarded": 0
         },
         "juan": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "diego": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "freddy": {
