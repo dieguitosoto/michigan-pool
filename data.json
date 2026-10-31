@@ -268,17 +268,17 @@
       "week": 8,
       "date": "2026-10-31",
       "opponent": "Rutgers",
-      "spread": -17.5,
+      "spread": -16.5,
       "locked": false,
-      "gameFinished": true,
-      "michiganWon": true,
-      "michiganCovered": false,
-      "michiganScore": 13,
-      "opponentScore": 12,
+      "gameFinished": false,
+      "michiganWon": null,
+      "michiganCovered": null,
+      "michiganScore": null,
+      "opponentScore": null,
       "picks": {
         "lander": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 1
         },
         "juan": {
@@ -293,7 +293,7 @@
         },
         "freddy": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 1
         }
       }
