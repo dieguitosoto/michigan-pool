@@ -63,19 +63,19 @@ for week in data['weeks']:
     aliases = OPPONENT_ALIASES.get(opponent, [opponent])
     
     for alias in aliases:
-        pattern = rf'{re.escape(alias)}[\s\S]*?\b([WL])?\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
+        # Tighter pattern: Looks strictly within 80 characters of the alias name.
+        # This prevents skipping past upcoming unplayed games to pick up old scores.
+        pattern = rf'{re.escape(alias)}{{1,80}}?\b([WL])\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
         match = re.search(pattern, clean_text, re.IGNORECASE)
         
         if match:
             outcome, s1_str, s2_str = match.groups()
             s1, s2 = int(s1_str), int(s2_str)
             
-            if outcome and outcome.upper() == 'W':
+            if outcome.upper() == 'W':
                 m_score, o_score = max(s1, s2), min(s1, s2)
-            elif outcome and outcome.upper() == 'L':
-                m_score, o_score = min(s1, s2), max(s1, s2)
             else:
-                m_score, o_score = s1, s2
+                m_score, o_score = min(s1, s2), max(s1, s2)
                 
             is_completed = True
             print(f"MGoBlue Match Found ({alias}) -> Michigan: {m_score}, {opponent}: {o_score}")
