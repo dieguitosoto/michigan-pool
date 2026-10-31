@@ -236,31 +236,31 @@
       "opponent": "Indiana",
       "spread": 7.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": false,
+      "michiganCovered": true,
+      "michiganScore": 6,
+      "opponentScore": 13,
       "picks": {
         "lander": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 2
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "diego": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 2
+          "pointsAwarded": 1
         }
       }
     },
@@ -270,31 +270,31 @@
       "opponent": "Rutgers",
       "spread": -17.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": true,
+      "michiganCovered": false,
+      "michiganScore": 13,
+      "opponentScore": 12,
       "picks": {
         "lander": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "diego": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         }
       }
     },
