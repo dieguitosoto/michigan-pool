@@ -21,11 +21,11 @@ OPPONENT_ALIASES = {
     "Minnesota": ["Minnesota"],
     "Penn State": ["Penn State", "PSU"],
     "Indiana": ["Indiana"],
-    "Rutgers": ["Rutgers"],
+    "Rutgers": ["Rutgers", "at Rutgers", "@ Rutgers"],
     "Michigan State": ["Michigan State", "MSU"],
-    "Oregon": ["Oregon"],
+    "Oregon": ["Oregon", "at Oregon", "@ Oregon"],
     "UCLA": ["UCLA"],
-    "Ohio State": ["Ohio State", "OSU"]
+    "Ohio State": ["Ohio State", "OSU", "at Ohio State", "@ Ohio State"]
 }
 
 headers = {
@@ -63,9 +63,8 @@ for week in data['weeks']:
     aliases = OPPONENT_ALIASES.get(opponent, [opponent])
     
     for alias in aliases:
-        # Tighter pattern: Looks strictly within 80 characters of the alias name.
-        # This prevents skipping past upcoming unplayed games to pick up old scores.
-        pattern = rf'{re.escape(alias)}{{1,80}}?\b([WL])\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
+        # Corrected regex pattern: Matches alias followed by 0-150 characters before W/L score string
+        pattern = rf'{re.escape(alias)}[\s\S]{{0,150}}?\b([WL])\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
         match = re.search(pattern, clean_text, re.IGNORECASE)
         
         if match:
@@ -80,6 +79,9 @@ for week in data['weeks']:
             is_completed = True
             print(f"MGoBlue Match Found ({alias}) -> Michigan: {m_score}, {opponent}: {o_score}")
             break
+
+    if not is_completed:
+        print(f"Could not parse score for {opponent} from MGoBlue. Text window check failed.")
 
     if is_completed and m_score is not None and o_score is not None and not week['gameFinished']:
         print("Calculating points for pool participants...")
