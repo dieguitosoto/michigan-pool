@@ -293,7 +293,7 @@
         },
         "freddy": {
           "winPick": true,
-          "coverPick": fales,
+          "coverPick": false,
           "pointsAwarded": 1
         }
       }
