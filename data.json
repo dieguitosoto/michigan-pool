@@ -278,13 +278,13 @@
       "picks": {
         "lander": {
           "winPick": true,
-          "coverPick": false,
-          "pointsAwarded": 2
+          "coverPick": true,
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": true,
-          "coverPick": true,
-          "pointsAwarded": 1
+          "coverPick": false,
+          "pointsAwarded": 2
         },
         "diego": {
           "winPick": true,
