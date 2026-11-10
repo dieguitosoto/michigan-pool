@@ -22,10 +22,29 @@
       padding: 16px; 
       margin-bottom: 20px; 
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+      position: relative;
     }
     .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
 
-    /* Horizontal Scroll Outer Wrapper */
+    /* Outer Container with Position Relative for Axis Sticking */
+    .chart-wrapper-outer {
+      position: relative;
+      width: 100%;
+    }
+
+    /* Sticky Y-Axis Canvas Container overlaying the left side */
+    .sticky-y-axis {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 42px;
+      height: 400px;
+      background: white;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Scrollable Inner Container */
     .chart-scroll-wrapper {
       width: 100%;
       overflow-x: auto;
@@ -34,7 +53,6 @@
       position: relative;
     }
 
-    /* Inner canvas container that expands based on week count */
     .chart-inner-container {
       position: relative;
       height: 400px;
@@ -46,16 +64,15 @@
       h1 { font-size: 2rem; }
       .card { padding: 24px; }
       .card h2 { text-align: left; font-size: 1.35rem; }
-      .chart-inner-container { height: 480px; }
+      .chart-inner-container, .sticky-y-axis { height: 480px; }
     }
 
-    /* Landscape Mode Fix for Mobile Phones */
     @media (orientation: landscape) and (max-height: 500px) {
       body { padding: 6px; }
       h1 { display: none; }
       .card { padding: 10px 14px; margin-bottom: 0; }
       .card h2 { display: block; font-size: 1rem; margin-bottom: 6px; }
-      .chart-inner-container { height: 260px; }
+      .chart-inner-container, .sticky-y-axis { height: 260px; }
     }
   </style>
 </head>
@@ -65,9 +82,14 @@
 
   <div class="card">
     <h2>Cumulative Leaderboard</h2>
-    <div class="chart-scroll-wrapper" id="scrollWrapper">
-      <div class="chart-inner-container" id="innerContainer">
-        <canvas id="leaderboardChart"></canvas>
+    <div class="chart-wrapper-outer">
+      <!-- Sticky Overlay Canvas for fixed Y-Axis ticks -->
+      <canvas id="yAxisCanvas" class="sticky-y-axis"></canvas>
+      
+      <div class="chart-scroll-wrapper" id="scrollWrapper">
+        <div class="chart-inner-container" id="innerContainer">
+          <canvas id="leaderboardChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -78,7 +100,7 @@ let chartInstance = null;
 
 let animationProgress = 0;
 let animationStartTime = null;
-const animationDuration = 2200; // milliseconds
+const animationDuration = 2200;
 
 // Progressive Reveal Plugin
 const revealPlugin = {
@@ -99,7 +121,7 @@ const revealPlugin = {
   }
 };
 
-// Avatar Plugin (Draws face badges on the final completed week)
+// Avatar Plugin
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -168,14 +190,12 @@ function animateReveal(timestamp) {
   animationProgress = Math.min(elapsed / animationDuration, 1);
   if (chartInstance) chartInstance.draw();
 
-  // Smooth Synchronized Camera Tracking
   const wrapper = document.getElementById('scrollWrapper');
   if (wrapper && chartInstance && chartInstance.chartArea) {
     const chartArea = chartInstance.chartArea;
     const currentLineX = chartArea.left + (chartArea.right - chartArea.left) * animationProgress;
-    
-    // Smoothly pan scrollLeft so the leading line tip stays centered on smaller screens
     const targetScroll = currentLineX - (wrapper.clientWidth / 2);
+    
     if (targetScroll > 0) {
       wrapper.scrollLeft = targetScroll;
     }
@@ -186,12 +206,25 @@ function animateReveal(timestamp) {
   }
 }
 
+function copyYAxis() {
+  const yCanvas = document.getElementById('yAxisCanvas');
+  const mainCanvas = document.getElementById('leaderboardChart');
+  if (!yCanvas || !mainCanvas) return;
+
+  const yCtx = yCanvas.getContext('2d');
+  yCanvas.width = 42;
+  yCanvas.height = mainCanvas.height;
+
+  // Copies the Y-axis label column from the main chart into the sticky overlay
+  yCtx.clearRect(0, 0, yCanvas.width, yCanvas.height);
+  yCtx.drawImage(mainCanvas, 0, 0, 42, mainCanvas.height, 0, 0, 42, mainCanvas.height);
+}
+
 function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
   const isLandscapeMobile = window.innerHeight < 500;
   const isMobile = window.innerWidth < 600 || isLandscapeMobile;
 
-  // Set inner container width: allocate ~95px per week on mobile so ticks stay legible
   const innerContainer = document.getElementById('innerContainer');
   const minPixelsPerWeek = isMobile ? 95 : 120;
   const calculatedWidth = finishedWeeks.length * minPixelsPerWeek;
@@ -200,7 +233,6 @@ function renderChart() {
     innerContainer.style.minWidth = `${Math.max(calculatedWidth, innerContainer.parentElement.clientWidth)}px`;
   }
 
-  // Reset scroll position to 0 so the user sees Week 1 at the start of animation
   const wrapper = document.getElementById('scrollWrapper');
   if (wrapper) wrapper.scrollLeft = 0;
 
@@ -256,7 +288,15 @@ function renderChart() {
   chartInstance = new Chart(document.getElementById('leaderboardChart'), {
     type: 'line',
     data: { labels: detailedLabels, datasets },
-    plugins: [revealPlugin, avatarPlugin],
+    plugins: [
+      revealPlugin, 
+      avatarPlugin,
+      {
+        id: 'copyYAxisPlugin',
+        afterRender() { copyYAxis(); },
+        afterDraw() { copyYAxis(); }
+      }
+    ],
     options: {
       responsive: true,
       maintainAspectRatio: false,
