@@ -302,7 +302,7 @@
       "week": 9,
       "date": "2026-11-07",
       "opponent": "Michigan State",
-      "spread": -14.5,
+      "spread": -16.5,
       "locked": false,
       "gameFinished": false,
       "michiganWon": null,
@@ -317,17 +317,17 @@
         },
         "juan": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "diego": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "freddy": {
           "winPick": true,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 0
         }
       }
