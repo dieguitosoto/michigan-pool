@@ -26,18 +26,18 @@
     }
     .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
 
-    /* Outer Container with Position Relative for Axis Sticking */
+    /* Outer Wrapper */
     .chart-wrapper-outer {
       position: relative;
       width: 100%;
     }
 
-    /* Sticky Y-Axis Canvas Container overlaying the left side */
+    /* Fixed Sticky Y-Axis Overlay */
     .sticky-y-axis {
       position: absolute;
       top: 0;
       left: 0;
-      width: 42px;
+      width: 45px;
       height: 400px;
       background: white;
       z-index: 10;
@@ -209,15 +209,17 @@ function animateReveal(timestamp) {
 function copyYAxis() {
   const yCanvas = document.getElementById('yAxisCanvas');
   const mainCanvas = document.getElementById('leaderboardChart');
-  if (!yCanvas || !mainCanvas) return;
+  if (!yCanvas || !mainCanvas || !chartInstance || !chartInstance.chartArea) return;
 
   const yCtx = yCanvas.getContext('2d');
-  yCanvas.width = 42;
+  yCanvas.width = 45;
   yCanvas.height = mainCanvas.height;
 
-  // Copies the Y-axis label column from the main chart into the sticky overlay
   yCtx.clearRect(0, 0, yCanvas.width, yCanvas.height);
-  yCtx.drawImage(mainCanvas, 0, 0, 42, mainCanvas.height, 0, 0, 42, mainCanvas.height);
+  
+  // Only copy the region down to the baseline of the chart area (stopping before the X-axis labels start)
+  const copyHeight = chartInstance.chartArea.bottom + 5;
+  yCtx.drawImage(mainCanvas, 0, 0, 45, copyHeight, 0, 0, 45, copyHeight);
 }
 
 function renderChart() {
@@ -305,7 +307,7 @@ function renderChart() {
         padding: {
           top: 10,
           right: isLandscapeMobile ? 28 : (isMobile ? 32 : 40),
-          left: isMobile ? 10 : 15,
+          left: isMobile ? 15 : 20,
           bottom: 5
         }
       },
