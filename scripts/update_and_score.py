@@ -22,7 +22,7 @@ OPPONENT_ALIASES = {
     "Penn State": ["Penn State", "PSU"],
     "Indiana": ["Indiana"],
     "Rutgers": ["Rutgers", "at Rutgers", "@ Rutgers"],
-    "Michigan State": ["Michigan State", "MSU"],
+    "Michigan State": ["Michigan State", "MSU", "at Michigan State", "@ Michigan State"],
     "Oregon": ["Oregon", "at Oregon", "@ Oregon"],
     "UCLA": ["UCLA"],
     "Ohio State": ["Ohio State", "OSU", "at Ohio State", "@ Ohio State"]
@@ -63,8 +63,8 @@ for week in data['weeks']:
     aliases = OPPONENT_ALIASES.get(opponent, [opponent])
     
     for alias in aliases:
-        # Corrected regex pattern: Matches alias followed by 0-150 characters before W/L score string
-        pattern = rf'{re.escape(alias)}[\s\S]{{0,150}}?\b([WL])\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
+        # Matches alias name followed by up to 250 chars before the score string (e.g., W, 38-13)
+        pattern = rf'{re.escape(alias)}[\s\S]{{0,250}}?\b([WL])\b\s*,?\s*(\d{{1,3}})\s*-\s*(\d{{1,3}})'
         match = re.search(pattern, clean_text, re.IGNORECASE)
         
         if match:
