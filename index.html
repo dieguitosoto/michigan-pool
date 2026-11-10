@@ -260,7 +260,7 @@ function renderChart() {
       layout: {
         padding: {
           top: 10,
-          right: isLandscapeMobile ? 35 : (isMobile ? 45 : 55),
+          right: isLandscapeMobile ? 55 : (isMobile ? 60 : 75), // Expanded right padding for avatars + Y-axis
           left: isMobile ? 15 : 20,
           bottom: 5
         }
@@ -297,12 +297,12 @@ function renderChart() {
           min: 0,
           suggestedMax: 10,
           grid: {
-            drawOnChartArea: false // Avoid duplicating horizontal grid lines
+            drawOnChartArea: false
           },
           ticks: {
             stepSize: 1,
             precision: 0,
-            padding: 8,
+            padding: isMobile ? 16 : 22, // Pushes tick numbers right past avatar badges
             font: {
               size: isLandscapeMobile ? 9.5 : (isMobile ? 11 : 13),
               weight: 'bold'
