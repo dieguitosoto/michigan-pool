@@ -22,10 +22,11 @@
       padding: 16px; 
       margin-bottom: 20px; 
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+      position: relative;
     }
     .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
 
-    /* Horizontal Scroll Outer Wrapper */
+    /* Scrollable Outer Wrapper */
     .chart-scroll-wrapper {
       width: 100%;
       overflow-x: auto;
@@ -34,7 +35,7 @@
       position: relative;
     }
 
-    /* Inner canvas container that expands based on week count */
+    /* Inner canvas container expanding dynamically based on week count */
     .chart-inner-container {
       position: relative;
       height: 400px;
@@ -49,7 +50,6 @@
       .chart-inner-container { height: 480px; }
     }
 
-    /* Landscape Mode Fix for Mobile Phones */
     @media (orientation: landscape) and (max-height: 500px) {
       body { padding: 6px; }
       h1 { display: none; }
@@ -78,7 +78,7 @@ let chartInstance = null;
 
 let animationProgress = 0;
 let animationStartTime = null;
-const animationDuration = 2200; // milliseconds
+const animationDuration = 2200;
 
 // Progressive Reveal Plugin
 const revealPlugin = {
@@ -99,7 +99,7 @@ const revealPlugin = {
   }
 };
 
-// Avatar Plugin (Draws face badges on the final completed week)
+// Avatar Plugin
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -168,14 +168,12 @@ function animateReveal(timestamp) {
   animationProgress = Math.min(elapsed / animationDuration, 1);
   if (chartInstance) chartInstance.draw();
 
-  // Smooth Synchronized Camera Tracking
   const wrapper = document.getElementById('scrollWrapper');
   if (wrapper && chartInstance && chartInstance.chartArea) {
     const chartArea = chartInstance.chartArea;
     const currentLineX = chartArea.left + (chartArea.right - chartArea.left) * animationProgress;
-    
-    // Smoothly pan scrollLeft so the leading line tip stays centered on smaller screens
     const targetScroll = currentLineX - (wrapper.clientWidth / 2);
+    
     if (targetScroll > 0) {
       wrapper.scrollLeft = targetScroll;
     }
@@ -191,7 +189,6 @@ function renderChart() {
   const isLandscapeMobile = window.innerHeight < 500;
   const isMobile = window.innerWidth < 600 || isLandscapeMobile;
 
-  // Set inner container width: allocate ~95px per week on mobile so ticks stay legible
   const innerContainer = document.getElementById('innerContainer');
   const minPixelsPerWeek = isMobile ? 95 : 120;
   const calculatedWidth = finishedWeeks.length * minPixelsPerWeek;
@@ -200,7 +197,6 @@ function renderChart() {
     innerContainer.style.minWidth = `${Math.max(calculatedWidth, innerContainer.parentElement.clientWidth)}px`;
   }
 
-  // Reset scroll position to 0 so the user sees Week 1 at the start of animation
   const wrapper = document.getElementById('scrollWrapper');
   if (wrapper) wrapper.scrollLeft = 0;
 
@@ -264,8 +260,8 @@ function renderChart() {
       layout: {
         padding: {
           top: 10,
-          right: isLandscapeMobile ? 28 : (isMobile ? 32 : 40),
-          left: isMobile ? 10 : 15,
+          right: isLandscapeMobile ? 35 : (isMobile ? 45 : 55),
+          left: isMobile ? 15 : 20,
           bottom: 5
         }
       },
@@ -286,13 +282,30 @@ function renderChart() {
         },
         y: {
           min: 0,
-          suggestedMax: 5,
+          suggestedMax: 10,
           ticks: {
             stepSize: 1,
             precision: 0,
             padding: 6,
             font: {
               size: isLandscapeMobile ? 9.5 : (isMobile ? 11 : 13)
+            }
+          }
+        },
+        y1: {
+          position: 'right',
+          min: 0,
+          suggestedMax: 10,
+          grid: {
+            drawOnChartArea: false // Avoid duplicating horizontal grid lines
+          },
+          ticks: {
+            stepSize: 1,
+            precision: 0,
+            padding: 8,
+            font: {
+              size: isLandscapeMobile ? 9.5 : (isMobile ? 11 : 13),
+              weight: 'bold'
             }
           }
         }
