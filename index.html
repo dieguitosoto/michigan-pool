@@ -25,11 +25,20 @@
     }
     .card h2 { margin-top: 0; margin-bottom: 12px; font-size: 1.2rem; text-align: center; color: #00274C; }
 
-    /* Responsive Chart Container */
-    .chart-container {
-      position: relative;
+    /* Horizontal Scroll Outer Wrapper */
+    .chart-scroll-wrapper {
       width: 100%;
-      height: 400px; /* Default height for portrait mobile */
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    /* Inner canvas container that expands based on week count */
+    .chart-inner-container {
+      position: relative;
+      height: 400px;
+      min-width: 100%;
     }
 
     @media (min-width: 768px) {
@@ -37,16 +46,16 @@
       h1 { font-size: 2rem; }
       .card { padding: 24px; }
       .card h2 { text-align: left; font-size: 1.35rem; }
-      .chart-container { height: 480px; }
+      .chart-inner-container { height: 480px; }
     }
 
     /* Landscape Mode Fix for Mobile Phones */
     @media (orientation: landscape) and (max-height: 500px) {
       body { padding: 6px; }
-      h1 { display: none; } /* Hide large page header in landscape to save vertical space */
+      h1 { display: none; }
       .card { padding: 10px 14px; margin-bottom: 0; }
-      .card h2 { display: block; font-size: 1rem; margin-bottom: 6px; } /* Keep chart title visible */
-      .chart-container { height: 260px; } /* Scaled height so top title and bottom labels fit completely */
+      .card h2 { display: block; font-size: 1rem; margin-bottom: 6px; }
+      .chart-inner-container { height: 260px; }
     }
   </style>
 </head>
@@ -56,8 +65,10 @@
 
   <div class="card">
     <h2>Cumulative Leaderboard</h2>
-    <div class="chart-container">
-      <canvas id="leaderboardChart"></canvas>
+    <div class="chart-scroll-wrapper" id="scrollWrapper">
+      <div class="chart-inner-container" id="innerContainer">
+        <canvas id="leaderboardChart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -67,7 +78,7 @@ let chartInstance = null;
 
 let animationProgress = 0;
 let animationStartTime = null;
-const animationDuration = 2000;
+const animationDuration = 2200; // milliseconds
 
 // Progressive Reveal Plugin
 const revealPlugin = {
@@ -88,7 +99,7 @@ const revealPlugin = {
   }
 };
 
-// Avatar Plugin
+// Avatar Plugin (Draws face badges on the final completed week)
 const avatarPlugin = {
   id: 'avatarPlugin',
   afterDraw(chart) {
@@ -114,7 +125,6 @@ const avatarPlugin = {
     const isLandscapeMobile = window.innerHeight < 500;
     const isMobile = window.innerWidth < 600 || isLandscapeMobile;
     
-    // Scale avatars down slightly in landscape mode to prevent crowding
     const size = isLandscapeMobile ? 22 : (isMobile ? 25 : 32);
     const spacing = isLandscapeMobile ? 24 : (isMobile ? 28 : 36);
 
@@ -158,6 +168,19 @@ function animateReveal(timestamp) {
   animationProgress = Math.min(elapsed / animationDuration, 1);
   if (chartInstance) chartInstance.draw();
 
+  // Smooth Synchronized Camera Tracking
+  const wrapper = document.getElementById('scrollWrapper');
+  if (wrapper && chartInstance && chartInstance.chartArea) {
+    const chartArea = chartInstance.chartArea;
+    const currentLineX = chartArea.left + (chartArea.right - chartArea.left) * animationProgress;
+    
+    // Smoothly pan scrollLeft so the leading line tip stays centered on smaller screens
+    const targetScroll = currentLineX - (wrapper.clientWidth / 2);
+    if (targetScroll > 0) {
+      wrapper.scrollLeft = targetScroll;
+    }
+  }
+
   if (animationProgress < 1) {
     requestAnimationFrame(animateReveal);
   }
@@ -167,6 +190,19 @@ function renderChart() {
   const finishedWeeks = appData.weeks.filter(w => w.gameFinished).sort((a, b) => a.week - b.week);
   const isLandscapeMobile = window.innerHeight < 500;
   const isMobile = window.innerWidth < 600 || isLandscapeMobile;
+
+  // Set inner container width: allocate ~95px per week on mobile so ticks stay legible
+  const innerContainer = document.getElementById('innerContainer');
+  const minPixelsPerWeek = isMobile ? 95 : 120;
+  const calculatedWidth = finishedWeeks.length * minPixelsPerWeek;
+  
+  if (innerContainer) {
+    innerContainer.style.minWidth = `${Math.max(calculatedWidth, innerContainer.parentElement.clientWidth)}px`;
+  }
+
+  // Reset scroll position to 0 so the user sees Week 1 at the start of animation
+  const wrapper = document.getElementById('scrollWrapper');
+  if (wrapper) wrapper.scrollLeft = 0;
 
   const detailedLabels = finishedWeeks.map(w => {
     const outcomeChar = w.michiganWon ? 'W' : 'L';
@@ -229,7 +265,7 @@ function renderChart() {
         padding: {
           top: 10,
           right: isLandscapeMobile ? 28 : (isMobile ? 32 : 40),
-          left: isMobile ? 5 : 15,
+          left: isMobile ? 10 : 15,
           bottom: 5
         }
       },
