@@ -304,11 +304,11 @@
       "opponent": "Michigan State",
       "spread": -16.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": false,
+      "michiganCovered": false,
+      "michiganScore": 6,
+      "opponentScore": 15,
       "picks": {
         "lander": {
           "winPick": true,
@@ -318,17 +318,17 @@
         "juan": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "diego": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "freddy": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         }
       }
     },
