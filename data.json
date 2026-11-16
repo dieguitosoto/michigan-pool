@@ -338,16 +338,16 @@
       "opponent": "Oregon",
       "spread": 3.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": false,
+      "michiganCovered": false,
+      "michiganScore": 7,
+      "opponentScore": 31,
       "picks": {
         "lander": {
           "winPick": false,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "juan": {
           "winPick": true,
@@ -362,7 +362,7 @@
         "freddy": {
           "winPick": false,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         }
       }
     },
