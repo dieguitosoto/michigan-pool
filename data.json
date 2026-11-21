@@ -336,7 +336,7 @@
       "week": 10,
       "date": "2026-11-14",
       "opponent": "Oregon",
-      "spread": 3.5,
+      "spread": 10.5,
       "locked": false,
       "gameFinished": true,
       "michiganWon": false,
@@ -350,18 +350,18 @@
           "pointsAwarded": 1
         },
         "juan": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "diego": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "freddy": {
           "winPick": false,
-          "coverPick": true,
+          "coverPick": false,
           "pointsAwarded": 1
         }
       }
@@ -370,7 +370,7 @@
       "week": 11,
       "date": "2026-11-21",
       "opponent": "UCLA",
-      "spread": -10.5,
+      "spread": 3.5,
       "locked": false,
       "gameFinished": false,
       "michiganWon": null,
