@@ -352,17 +352,17 @@
         "juan": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         },
         "diego": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         },
         "freddy": {
           "winPick": false,
           "coverPick": false,
-          "pointsAwarded": 1
+          "pointsAwarded": 2
         }
       }
     },
