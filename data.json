@@ -379,17 +379,17 @@
       "opponentScore": null,
       "picks": {
         "lander": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "juan": {
-          "winPick": true,
-          "coverPick": true,
+          "winPick": false,
+          "coverPick": false,
           "pointsAwarded": 0
         },
         "diego": {
-          "winPick": true,
+          "winPick": false,
           "coverPick": true,
           "pointsAwarded": 0
         },
