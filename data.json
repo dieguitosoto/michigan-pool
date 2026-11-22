@@ -384,7 +384,7 @@
           "pointsAwarded": 0
         },
         "juan": {
-          "winPick": false,
+          "winPick": true,
           "coverPick": false,
           "pointsAwarded": 0
         },
