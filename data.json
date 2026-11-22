@@ -372,11 +372,11 @@
       "opponent": "UCLA",
       "spread": 3.5,
       "locked": false,
-      "gameFinished": false,
-      "michiganWon": null,
-      "michiganCovered": null,
-      "michiganScore": null,
-      "opponentScore": null,
+      "gameFinished": true,
+      "michiganWon": true,
+      "michiganCovered": true,
+      "michiganScore": 18,
+      "opponentScore": 16,
       "picks": {
         "lander": {
           "winPick": false,
@@ -386,17 +386,17 @@
         "juan": {
           "winPick": true,
           "coverPick": false,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "diego": {
           "winPick": false,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 1
         },
         "freddy": {
           "winPick": true,
           "coverPick": true,
-          "pointsAwarded": 0
+          "pointsAwarded": 2
         }
       }
     },
